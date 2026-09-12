@@ -1,0 +1,2439 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>双手交互星空粒子 - 粒子神剑与能量手枪全能版</title>
+    <!-- Three.js (使用高速稳定 fastly 镜像) -->
+    <script src="https://fastly.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+    <!-- MediaPipe Hands & Camera -->
+    <script src="https://fastly.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://fastly.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #030307;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+            color: #fff;
+        }
+
+        #canvas-container {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+
+        #input-video {
+            display: none;
+        }
+
+        /* 顶部科幻 HUD 状态栏 */
+        #hud-top {
+            position: absolute;
+            top: 18px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background: rgba(13, 17, 28, 0.82);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            padding: 9px 24px;
+            border-radius: 40px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6), inset 0 0 14px rgba(56, 189, 248, 0.2);
+            pointer-events: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .hud-status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #38bdf8;
+            box-shadow: 0 0 12px #38bdf8;
+            animation: pulse-dot 1.4s infinite;
+        }
+
+        .hud-text {
+            font-size: 13.5px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            color: #f1f5f9;
+        }
+
+        .hud-fps {
+            font-family: 'SF Mono', Consolas, Monaco, monospace;
+            font-size: 12px;
+            color: #38bdf8;
+            border-left: 1px solid rgba(255, 255, 255, 0.15);
+            padding-left: 12px;
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.45; transform: scale(0.85); }
+        }
+
+        /* 手势实时状态徽章条 */
+        #gesture-badges {
+            position: absolute;
+            top: 68px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            pointer-events: none;
+        }
+
+        .gesture-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .badge-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .gesture-badge.active-badge {
+            border-color: #38bdf8;
+            box-shadow: 0 0 16px rgba(56, 189, 248, 0.5);
+            transform: scale(1.05);
+            background: rgba(30, 41, 59, 0.95);
+        }
+
+        .badge-weapon-active {
+            border-color: #facc15 !important;
+            box-shadow: 0 0 22px rgba(250, 204, 21, 0.8) !important;
+            background: rgba(45, 30, 10, 0.95) !important;
+            color: #fef08a !important;
+            transform: scale(1.12) !important;
+        }
+
+        /* 顶部神技指南条 */
+        #hint-overlay {
+            position: absolute;
+            top: 112px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            background: rgba(15, 23, 42, 0.72);
+            backdrop-filter: blur(12px);
+            padding: 7px 22px;
+            border-radius: 24px;
+            font-size: 12px;
+            color: #cbd5e1;
+            pointer-events: none;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            opacity: 0.95;
+            white-space: nowrap;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        #hint-overlay b {
+            color: #38bdf8;
+        }
+
+        .gun-color {
+            color: #f87171 !important;
+            font-weight: 700;
+        }
+
+        .sword-color {
+            color: #facc15 !important;
+            font-weight: 700;
+        }
+
+        /* 左下角双手监控画中画 (升级为大屏超清监控) */
+        #camera-pip-box {
+            position: absolute;
+            left: 22px;
+            bottom: 82px;
+            width: 440px;
+            height: 330px;
+            background: rgba(15, 23, 42, 0.90);
+            backdrop-filter: blur(16px);
+            border: 1.5px solid rgba(255, 255, 255, 0.22);
+            border-radius: 18px;
+            overflow: hidden;
+            z-index: 10;
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.75);
+            transition: width 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), 
+                        height 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+                        border-color 0.25s ease,
+                        box-shadow 0.25s ease,
+                        bottom 0.3s ease;
+            cursor: pointer;
+        }
+
+        #camera-pip-box:hover {
+            border-color: rgba(56, 189, 248, 0.8);
+            box-shadow: 0 20px 48px rgba(56, 189, 248, 0.28);
+        }
+
+        #camera-pip-box.pip-expanded {
+            width: 600px;
+            height: 450px;
+            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.85), 0 0 25px rgba(56, 189, 248, 0.35);
+            border-color: rgba(56, 189, 248, 0.9);
+        }
+
+        #pip-canvas {
+            width: 100%;
+            height: 100%;
+            transform: scaleX(-1);
+            display: block;
+        }
+
+        .pip-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.78);
+            backdrop-filter: blur(8px);
+            color: #38bdf8;
+            letter-spacing: 0.5px;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .pip-toggle-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 8px;
+            background: rgba(15, 23, 42, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            color: #f1f5f9;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            z-index: 5;
+        }
+
+        .pip-toggle-btn:hover {
+            background: rgba(56, 189, 248, 0.25);
+            border-color: #38bdf8;
+            color: #38bdf8;
+        }
+
+        .pip-legend {
+            position: absolute;
+            bottom: 8px;
+            left: 10px;
+            right: 10px;
+            font-size: 10.5px;
+            display: flex;
+            justify-content: space-between;
+            color: #cbd5e1;
+            pointer-events: none;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 3px 10px;
+            border-radius: 6px;
+            backdrop-filter: blur(6px);
+        }
+
+        /* 底部操作面板胶囊 */
+        #bottom-controls {
+            position: absolute;
+            bottom: 22px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(15, 23, 42, 0.82);
+            backdrop-filter: blur(18px);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            padding: 8px 18px;
+            border-radius: 32px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+        }
+
+        .control-btn {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #f1f5f9;
+            padding: 7px 12px;
+            border-radius: 20px;
+            font-size: 11.5px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .control-btn:hover {
+            background: rgba(56, 189, 248, 0.25);
+            border-color: rgba(56, 189, 248, 0.6);
+            color: #fff;
+            transform: translateY(-1px);
+        }
+
+        .btn-gold {
+            background: rgba(234, 179, 8, 0.18);
+            border-color: rgba(250, 204, 21, 0.5);
+            color: #fef08a;
+        }
+
+        .btn-gold:hover {
+            background: rgba(234, 179, 8, 0.35);
+            border-color: #facc15;
+            box-shadow: 0 0 14px rgba(250, 204, 21, 0.5);
+        }
+
+        .btn-red {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: rgba(248, 113, 113, 0.55);
+            color: #fca5a5;
+        }
+
+        .btn-red:hover {
+            background: rgba(239, 68, 68, 0.38);
+            border-color: #f87171;
+            box-shadow: 0 0 14px rgba(239, 68, 68, 0.55);
+        }
+
+        .control-btn:active {
+            transform: translateY(1px);
+        }
+
+        #loader {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #030307;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            transition: opacity 0.6s ease;
+        }
+
+        .spinner {
+            width: 56px;
+            height: 56px;
+            border: 4px solid rgba(56, 189, 248, 0.2);
+            border-top-color: #38bdf8;
+            border-radius: 50%;
+            animation: spin 0.9s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-title {
+            font-size: 19px;
+            font-weight: 600;
+            color: #f1f5f9;
+            letter-spacing: 1px;
+        }
+
+        .loading-desc {
+            font-size: 13px;
+            color: #94a3b8;
+        }
+    
+        /* 移动端短视频视口容器与边框 */
+        #canvas-container.container-framed {
+            position: absolute !important;
+            left: 50% !important;
+            top: 0 !important;
+            transform: translateX(-50%) !important;
+            box-shadow: 0 0 60px rgba(56, 189, 248, 0.35), 0 0 120px rgba(0, 0, 0, 0.95);
+            border-left: 2px solid rgba(56, 189, 248, 0.45);
+            border-right: 2px solid rgba(56, 189, 248, 0.45);
+            background: #030307;
+            overflow: hidden;
+        }
+
+        /* 短视频模式画中画：居中置底大屏呈现 (超清大视野) */
+        #camera-pip-box.pip-mobile-layout {
+            left: 50% !important;
+            transform: translateX(-50%) !important;
+            top: auto !important;
+            bottom: 84px !important;
+            width: min(360px, calc(100% - 24px)) !important;
+            height: min(270px, calc((100% - 24px) * 0.75)) !important;
+            border-color: rgba(56, 189, 248, 0.85) !important;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9), 0 0 20px rgba(56, 189, 248, 0.3) !important;
+            transition: bottom 0.3s ease, width 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), height 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        /* 短视频模式超大特写巨幕画中画 (点击放大或双击触发) */
+        #camera-pip-box.pip-mobile-layout.pip-expanded {
+            width: min(460px, calc(100% - 16px)) !important;
+            height: min(345px, calc((100% - 16px) * 0.75)) !important;
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.95), 0 0 30px rgba(56, 189, 248, 0.45) !important;
+        }
+
+        /* 纯净录制模式下，由于底部操作按钮隐藏，画中画优雅下沉至贴底安全区 (bottom: 24px) */
+        body.clean-mode-active #camera-pip-box.pip-mobile-layout {
+            bottom: 24px !important;
+        }
+
+        /* 竖屏短视频模式下：顶部状态条与手势提示标签保持顶部整洁居中 */
+        #canvas-container.container-framed ~ #hud-top {
+            top: 14px;
+            padding: 6px 18px;
+            font-size: 12px;
+            max-width: 90vw;
+        }
+        #canvas-container.container-framed ~ #gesture-badges {
+            top: 66px;
+            max-width: 90vw;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        /* 录制闪烁脉冲动画 */
+        @keyframes record-pulse {
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            70% { box-shadow: 0 0 0 12px rgba(239, 68, 68, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+        .recording-pulse {
+            animation: record-pulse 1.4s infinite !important;
+            background: #ef4444 !important;
+            color: #fff !important;
+        }
+
+        /* 平台安全区遮罩 (模拟抖音/小红书原生界面，防遮挡参考) */
+        #mobile-safe-overlay {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            pointer-events: none;
+            z-index: 8;
+            display: none;
+        }
+        .safe-overlay-douyin {
+            display: block !important;
+            width: calc(100vh * (9 / 16));
+            height: 100vh;
+        }
+        .safe-overlay-xhs {
+            display: block !important;
+            width: calc(100vh * (3 / 4));
+            height: 100vh;
+        }
+        .safe-side-icons {
+            position: absolute;
+            right: 12px;
+            bottom: 120px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            align-items: center;
+        }
+        .mock-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px dashed rgba(255, 255, 255, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            color: #f1f5f9;
+        }
+        .safe-bottom-text {
+            position: absolute;
+            left: 16px;
+            right: 80px;
+            bottom: 24px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px dashed rgba(255, 255, 255, 0.35);
+            background: rgba(0, 0, 0, 0.45);
+            font-size: 11px;
+            color: #cbd5e1;
+        }
+        .safe-watermark-tag {
+            position: absolute;
+            top: 18px;
+            right: 18px;
+            font-size: 10px;
+            color: #f43f5e;
+            background: rgba(0,0,0,0.6);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        /* 纯净模式浮动提示 */
+        #clean-mode-toast {
+            position: absolute;
+            top: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 8px 18px;
+            border-radius: 20px;
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid #38bdf8;
+            color: #38bdf8;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            z-index: 100;
+            display: none;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="loader">
+        <div class="spinner"></div>
+        <div class="loading-title">正在启动宇宙武器粒子引擎...</div>
+        <div class="loading-desc">已载入神剑与粒子手枪拓扑模型，请授权摄像头</div>
+    </div>
+
+    <div id="canvas-container"></div>
+
+    <!-- 移动端安全区辅助网格 -->
+    <div id="mobile-safe-overlay">
+        <div class="safe-watermark-tag">🛡️ 短视频安全防遮挡区</div>
+        <div class="safe-side-icons">
+            <div class="mock-icon" title="抖音头像遮挡区">头像</div>
+            <div class="mock-icon" title="点赞遮挡区">❤️</div>
+            <div class="mock-icon" title="评论遮挡区">💬</div>
+            <div class="mock-icon" title="分享遮挡区">↗️</div>
+        </div>
+        <div class="safe-bottom-text">
+            ⚠️ 手机短视频底部字幕与话题遮挡区 (已自动为神剑/手枪腾出上方黄金视区)
+        </div>
+    </div>
+
+    <!-- 纯净录屏模式提示 -->
+    <div id="clean-mode-toast">🎬 已开启纯净录制模式 (按键盘 H 键随时还原按钮)</div>
+
+
+    <!-- 顶部状态栏 -->
+    <div id="hud-top">
+        <div class="hud-status-dot" id="status-dot"></div>
+        <div class="hud-text" id="status-text">双手 AI 视觉感应就绪...</div>
+        <div class="hud-fps" id="fps-display">60 FPS (36,000 粒子)</div>
+    </div>
+
+    <!-- 实时手势徽章 -->
+    <div id="gesture-badges">
+        <div id="badge-left" class="gesture-badge">
+            <span class="badge-dot" style="background:#22d3ee"></span>
+            <span id="badge-left-text">手部 1: 等待感应</span>
+        </div>
+        <div id="badge-right" class="gesture-badge">
+            <span class="badge-dot" style="background:#f43f5e"></span>
+            <span id="badge-right-text">手部 2: 等待感应</span>
+        </div>
+        <div id="badge-clap" class="gesture-badge" style="display:none; background:rgba(234,179,8,0.25); border-color:#eab308; color:#fef08a;">
+            <span>👏 击掌时空激波</span>
+        </div>
+    </div>
+
+    <!-- 交互提示 -->
+    <div id="hint-overlay">
+        🔫 <span class="gun-color">拇指+食指(手枪手势)</span>：<b>粒子能量手枪(扣扳机开火)</b> ｜ 🗡️ <span class="sword-color">食指+中指(剑诀)</span>：<b>万剑归宗神剑</b> ｜ 🖐️ <b>张手掌</b>(斥力盾)
+    </div>
+
+    <!-- 画中画 -->
+    <div id="camera-pip-box" title="双击视窗或点击按钮放大/还原画中画">
+        <div class="pip-badge">👐 AI 视觉感知监控</div>
+        <button id="btn-pip-size" class="pip-toggle-btn" title="切换画中画尺寸 (大 / 默认)">⤢ 放大</button>
+        <canvas id="pip-canvas"></canvas>
+        <div class="pip-legend">
+            <span style="color:#22d3ee">● 手部 1</span>
+            <span style="color:#f43f5e">● 手部 2</span>
+            <span style="color:#94a3b8; font-size: 10px;">(双击放大/还原)</span>
+        </div>
+    </div>
+
+    <!-- 底部控制按钮 -->
+    <div id="bottom-controls">
+        <button class="control-btn" id="btn-theme">🎨 切换星系色彩</button>
+        <button class="control-btn btn-red" id="btn-demo-gun">🔫 能量手枪 (点击开火)</button>
+        <button class="control-btn btn-gold" id="btn-demo-sword">🗡️ 两指剑诀 (万剑归宗)</button>
+        <button class="control-btn" id="btn-demo-shield">🖐️ 时空斥力盾</button>
+        <button class="control-btn" id="btn-demo-clap">👏 击掌激波</button>
+        <button class="control-btn" id="btn-burst">💥 超新星</button>
+        <button class="control-btn" id="btn-pip">📷 画中画</button>
+        <button class="control-btn" id="btn-aspect" title="切换录屏画幅 (全屏 / 9:16 抖音 / 3:4 小红书)">📱 9:16 抖音</button>
+        <button class="control-btn btn-red" id="btn-record" title="点击开始/停止录制 60FPS 高清短视频 (支持按 R 键)">🔴 一键录屏</button>
+        <button class="control-btn" id="btn-safe-zone" style="display:none;" title="开关短视频点赞与字幕安全区框线">🛡️ 安全区</button>
+    </div>
+
+    <video id="input-video" playsinline></video>
+
+    <script>
+        // ==========================================
+        // 1. 全局配置：36,000 颗高精粒子 & 双手状态
+        // ==========================================
+        const PARTICLE_COUNT = 36000;
+
+        const GESTURES = {
+            IDLE: 'IDLE',         // 自然巡航
+            PINCH: 'PINCH',       // 捏合（黑洞引力吸附）
+            POINTER: 'POINTER',   // 单食指（流星光剑喷流）
+            SWORD: 'SWORD',       // ✌️ 双指剑诀（食指+中指·万剑归宗）
+            GUN: 'GUN',           // 🔫 拇指+食指（手枪姿势·能量手枪）
+            REPULSOR: 'REPULSOR', // 掌心斥力盾（反引力推开）
+            FIST: 'FIST'          // 握拳蓄力
+        };
+
+        const HANDS = [
+            {
+                id: 0,
+                active: false,
+                gesture: GESTURES.IDLE,
+                targetPos: new THREE.Vector3(),
+                smoothPos: new THREE.Vector3(),
+                wristWorld: new THREE.Vector3(),
+                thumbTipWorld: new THREE.Vector3(),
+                indexTipWorld: new THREE.Vector3(),
+                middleTipWorld: new THREE.Vector3(),
+                swordTipsMidWorld: new THREE.Vector3(),
+                aimDirection: new THREE.Vector3(0, 1, 0),
+                thumbDown: false,
+                lastThumbDown: false,
+                screenX: 0,
+                screenY: 0,
+                lastPinchTime: 0,
+                wasPinching: false,
+                label: '手部 1',
+                boneCol: 'rgba(34, 211, 238, 0.85)',
+                tipCol: '#38bdf8',
+                coreCol: 0x22d3ee
+            },
+            {
+                id: 1,
+                active: false,
+                gesture: GESTURES.IDLE,
+                targetPos: new THREE.Vector3(),
+                smoothPos: new THREE.Vector3(),
+                wristWorld: new THREE.Vector3(),
+                thumbTipWorld: new THREE.Vector3(),
+                indexTipWorld: new THREE.Vector3(),
+                middleTipWorld: new THREE.Vector3(),
+                swordTipsMidWorld: new THREE.Vector3(),
+                aimDirection: new THREE.Vector3(0.5, 0.86, 0).normalize(),
+                thumbDown: false,
+                lastThumbDown: false,
+                screenX: 0,
+                screenY: 0,
+                lastPinchTime: 0,
+                wasPinching: false,
+                label: '手部 2',
+                boneCol: 'rgba(244, 63, 94, 0.85)',
+                tipCol: '#fb7185',
+                coreCol: 0xf43f5e
+            }
+        ];
+
+        const MOUSE = {
+            active: false,
+            gesture: GESTURES.IDLE,
+            targetPos: new THREE.Vector3(),
+            smoothPos: new THREE.Vector3(),
+            wristWorld: new THREE.Vector3(),
+            indexTipWorld: new THREE.Vector3(),
+            middleTipWorld: new THREE.Vector3(),
+            swordTipsMidWorld: new THREE.Vector3(),
+            aimDirection: new THREE.Vector3(0.8, 0.6, 0).normalize()
+        };
+
+        let themeIndex = 0;
+        let mockGestureActive = false;
+        let currentWeapon = 'NONE'; // 'NONE' | 'SWORD' | 'GUN'
+        let weaponProgress = 0.0;
+        let recoilTime = 0.0; // 后坐力动画时间
+
+        // ==========================================
+        // 2. 多阶高饱和丰富色彩矩阵（4款大系）
+        // ==========================================
+        const THEMES = [
+            {
+                name: '仙女座梦幻 (洋红·电光青·紫罗兰·纯白)',
+                stops: [
+                    { pos: 0.00, color: 0xffffff },
+                    { pos: 0.15, color: 0x38bdf8 },
+                    { pos: 0.35, color: 0x818cf8 },
+                    { pos: 0.65, color: 0xf43f5e },
+                    { pos: 0.88, color: 0xc084fc },
+                    { pos: 1.00, color: 0x06b6d4 }
+                ]
+            },
+            {
+                name: '赛博极光霓虹 (荧光绿·金橙·深海青·洋红)',
+                stops: [
+                    { pos: 0.00, color: 0xffffff },
+                    { pos: 0.16, color: 0x34d399 },
+                    { pos: 0.38, color: 0xfacc15 },
+                    { pos: 0.65, color: 0x06b6d4 },
+                    { pos: 0.88, color: 0xe11d48 },
+                    { pos: 1.00, color: 0x8b5cf6 }
+                ]
+            },
+            {
+                name: '炽烈恒星超新星 (耀白·琥珀金·烈焰红·暗物质紫)',
+                stops: [
+                    { pos: 0.00, color: 0xffffff },
+                    { pos: 0.18, color: 0xfef08a },
+                    { pos: 0.42, color: 0xf59e0b },
+                    { pos: 0.68, color: 0xef4444 },
+                    { pos: 0.88, color: 0x991b1b },
+                    { pos: 1.00, color: 0x581c87 }
+                ]
+            },
+            {
+                name: '七彩虹光棱镜 (全色谱流光星系)',
+                stops: [
+                    { pos: 0.00, color: 0xffffff },
+                    { pos: 0.16, color: 0x38bdf8 },
+                    { pos: 0.32, color: 0x34d399 },
+                    { pos: 0.50, color: 0xfacc15 },
+                    { pos: 0.70, color: 0xf97316 },
+                    { pos: 0.86, color: 0xec4899 },
+                    { pos: 1.00, color: 0xa855f7 }
+                ]
+            }
+        ];
+
+        function sampleThemeColor(theme, ratio, spiralOffset = 0) {
+            const stops = theme.stops;
+            const t = Math.max(0, Math.min(1, ratio + Math.sin(spiralOffset) * 0.09));
+            for (let s = 0; s < stops.length - 1; s++) {
+                if (t >= stops[s].pos && t <= stops[s + 1].pos) {
+                    const span = stops[s + 1].pos - stops[s].pos;
+                    const factor = (t - stops[s].pos) / span;
+                    const c1 = new THREE.Color(stops[s].color);
+                    const c2 = new THREE.Color(stops[s + 1].color);
+                    return c1.lerp(c2, factor);
+                }
+            }
+            return new THREE.Color(stops[stops.length - 1].color);
+        }
+
+        // ==========================================
+        // 3. 武器几何拓扑预计算 (神剑 & 能量手枪)
+        // ==========================================
+        const swordLocalOffsets = new Float32Array(PARTICLE_COUNT * 3);
+        const swordParticleTypes = new Uint8Array(PARTICLE_COUNT);
+
+        const gunLocalOffsets = new Float32Array(PARTICLE_COUNT * 3);
+        const gunParticleTypes = new Uint8Array(PARTICLE_COUNT); // 0:枪管, 1:枪口聚焦环, 2:机匣与核心, 3:握把, 4:击锤准星
+
+        function initTemplates() {
+            // 3.1 神剑拓扑
+            for (let i = 0; i < PARTICLE_COUNT; i++) {
+                const i3 = i * 3;
+                let u = 0, v = 0, w = 0;
+                let type = 1;
+
+                if (i < PARTICLE_COUNT * 0.38) {
+                    type = 0;
+                    const progress = Math.random();
+                    u = 72 + progress * (285 - 72);
+                    const maxW = 16.5 * (1.0 - progress * 0.25);
+                    const side = Math.random() > 0.5 ? 1 : -1;
+                    v = side * (maxW - Math.random() * 2.5);
+                    w = (Math.random() - 0.5) * 2.2;
+                } else if (i < PARTICLE_COUNT * 0.72) {
+                    type = 1;
+                    const progress = Math.random();
+                    u = 72 + progress * (285 - 72);
+                    const maxW = 15.0 * (1.0 - progress * 0.3);
+                    v = (Math.random() - 0.5) * 2 * maxW * 0.85;
+                    const spineThick = Math.max(0.5, (1.0 - Math.abs(v) / (maxW + 0.1)) * 6.5);
+                    w = (Math.random() - 0.5) * spineThick;
+                } else if (i < PARTICLE_COUNT * 0.83) {
+                    type = 2;
+                    const tipProg = Math.random();
+                    u = 285 + tipProg * (340 - 285);
+                    const tipW = 12.0 * Math.pow(1.0 - tipProg, 1.25);
+                    v = (Math.random() - 0.5) * 2 * tipW;
+                    w = (Math.random() - 0.5) * (tipW * 0.6);
+                } else if (i < PARTICLE_COUNT * 0.93) {
+                    type = 3;
+                    u = 58 + (Math.random() - 0.5) * 14;
+                    v = (Math.random() - 0.5) * 104.0;
+                    w = (Math.random() - 0.5) * 8.0;
+                } else {
+                    type = 4;
+                    u = Math.random() * 58;
+                    const hiltW = (u < 10) ? 8.5 : 4.5;
+                    v = (Math.random() - 0.5) * 2 * hiltW;
+                    w = (Math.random() - 0.5) * 2 * hiltW;
+                }
+
+                swordLocalOffsets[i3] = u;
+                swordLocalOffsets[i3 + 1] = v;
+                swordLocalOffsets[i3 + 2] = w;
+                swordParticleTypes[i] = type;
+            }
+
+            // 3.2 经典真实巨型手炮拓扑 (Mega Hand Cannon Geometry - 与神剑同级体量 275px)
+            // 包含：重型平顶方形套筒(Slide)、加粗金属高能枪管(Barrel)、宽幅扳机护圈与弧形扳机(Trigger Guard & Trigger)、
+            // 110°后仰人体工学厚重握把(Grip)、前后荧光机械准星照门(Sights)、机甲击锤与虎口延伸托板(Hammer & Beavertail)、加宽加厚弹匣底座(Mag Base)
+            for (let i = 0; i < PARTICLE_COUNT; i++) {
+                const i3 = i * 3;
+                let gu = 0, gv = 0, gw = 0;
+                let gtype = 0;
+
+                if (i < PARTICLE_COUNT * 0.28) {
+                    // 0. 重型平顶方形套筒 (Slide) - 约 10,080 颗粒子
+                    gtype = 0;
+                    gu = -90 + Math.random() * 220; // u: -90 ~ 130
+                    let hRel = Math.random();
+                    gv = hRel * 36.0; // v: 0 ~ 36
+                    let wMax = 13.5;
+                    if (gv > 26.0) {
+                        // 顶部战术斜切倒角 (Beveled top edges)
+                        wMax *= (1.0 - (gv - 26.0) / 20.0);
+                    }
+                    gw = (Math.random() - 0.5) * 2 * wMax;
+
+                    // 侧向抛壳窗凹槽 (Ejection port cutout)
+                    if (gu > -5 && gu < 38 && gv > 16.0 && gw > 2.5) {
+                        gw = 2.2 + Math.random() * 3.2;
+                        gv = 11.0 + Math.random() * 6.5;
+                    }
+
+                } else if (i < PARTICLE_COUNT * 0.42) {
+                    // 1. 加粗高能金属枪管与空心枪膛 (Barrel & Hollow Bore) - 约 5,040 颗粒子
+                    gtype = 1;
+                    const prog = Math.random();
+                    gu = 40 + prog * 135; // u: 40 ~ 175 (探出套筒前方，威慑力拉满)
+                    const theta = Math.random() * Math.PI * 2;
+                    // 空心高能内膛: 外壁加固
+                    let r = 7.0 + Math.random() * 5.0; // 半径 7 ~ 12
+                    if (gu > 162) {
+                        r = 7.5 + Math.random() * 5.5; // 枪口加重加固环
+                    }
+                    gv = 16.5 + r * Math.sin(theta);
+                    gw = r * Math.cos(theta);
+
+                } else if (i < PARTICLE_COUNT * 0.54) {
+                    // 2. 标志性宽幅弧形扳机护圈与弧形扳机 (Trigger Guard & Trigger) - 约 4,320 颗粒子
+                    gtype = 2;
+                    if (i < PARTICLE_COUNT * 0.50) {
+                        // 2.1 宽幅弧形扳机护圈 (Trigger Guard Loop)
+                        const t = Math.PI * Math.random(); // 0 ~ PI
+                        const u0 = 16.0, rU = 30.0;
+                        const v0 = -6.0, rV = 36.0;
+                        const rThick = (Math.random() - 0.5) * 3.8;
+                        gu = u0 + (rU + rThick) * Math.cos(t);
+                        gv = v0 - (rV + rThick) * Math.sin(t);
+                        gw = (Math.random() - 0.5) * 7.0;
+                    } else {
+                        // 2.2 绯红月牙内弯扳机 (Trigger)
+                        const s = Math.random(); // 0 ~ 1
+                        gv = -4.0 - s * 28.0; // v: -4 ~ -32
+                        // 扳机弧线向后优雅微弯
+                        gu = 16.5 - Math.pow(s, 1.4) * 10.0 + (Math.random() - 0.5) * 3.2;
+                        gw = (Math.random() - 0.5) * 4.8;
+                    }
+
+                } else if (i < PARTICLE_COUNT * 0.80) {
+                    // 3. 人体工学挺拔厚重手柄握把 (Ergonomic Grip) - 约 9,360 颗粒子
+                    gtype = 3;
+                    gv = -6.0 - Math.random() * 109.0; // v: -6 ~ -115 (纵深延伸，紧贴套筒与扳机圈底缘)
+                    // 自然微倾角 (每向下 1 像素，u 后移 0.12，挺拔垂直不后翘)
+                    const uCenter = -38.0 + (gv + 6.0) * 0.12;
+                    // 握把前后厚度约 48 (前缘 -14 紧扣扳机圈后部，后缘 -62 紧嵌虎口托板)
+                    const uOffset = (Math.random() - 0.5) * 48.0;
+                    // 人体工学三段指槽曲线
+                    const fingerGroove = (uOffset > 12.0) ? Math.sin((gv + 6.0) * 0.15) * 2.8 : 0;
+                    gu = uCenter + uOffset + fingerGroove;
+                    gw = (Math.random() - 0.5) * 24.0;
+
+                } else if (i < PARTICLE_COUNT * 0.88) {
+                    // 4. 握把底部加厚加宽弹匣底托 (Magazine Baseplate) - 约 2,880 颗粒子
+                    gtype = 3;
+                    gv = -115.0 - Math.random() * 15.0; // v: -115 ~ -130
+                    const uCenter = -38.0 + (-109.0) * 0.12; // ~ -51.0
+                    gu = uCenter + (Math.random() - 0.5) * 60.0;
+                    gw = (Math.random() - 0.5) * 30.0;
+
+                } else if (i < PARTICLE_COUNT * 0.94) {
+                    // 5. 三点式机械准星与后照门 (Front & Rear Sights) - 约 2,160 颗粒子
+                    gtype = 4;
+                    if (Math.random() < 0.45) {
+                        // 5.1 前准星柱 (Front Sight Post, 位于套筒前部)
+                        gu = 110 + Math.random() * 15; // u: 110 ~ 125
+                        gv = 36.0 + Math.random() * 13.5; // v: 36 ~ 49.5
+                        gw = (Math.random() - 0.5) * 5.5;
+                    } else {
+                        // 5.2 后照门 (Rear Notch Sight, 位于套筒尾部，带双柱U型瞄准缺口)
+                        gu = -88 + Math.random() * 15; // u: -88 ~ -73
+                        gv = 36.0 + Math.random() * 12.5; // v: 36 ~ 48.5
+                        // U 型照门左右双峰
+                        const side = Math.random() > 0.5 ? 1 : -1;
+                        gw = side * (5.0 + Math.random() * 7.5);
+                    }
+
+                } else {
+                    // 6. 击锤与虎口延伸托板 (Hammer & Beavertail) - 约 2,160 颗粒子
+                    gtype = 5;
+                    if (Math.random() < 0.5) {
+                        // 6.1 虎口延伸托板 (Beavertail)
+                        gu = -90 + Math.random() * 34; // u: -90 ~ -56
+                        gv = -8.0 + Math.random() * 14.0; // v: -8 ~ 6
+                        gw = (Math.random() - 0.5) * 17.0;
+                    } else {
+                        // 6.2 翘立的机械击锤 (Cocked Hammer)
+                        gu = -98 + Math.random() * 12.0; // u: -98 ~ -86
+                        gv = 20.0 + Math.random() * 26.0; // v: 20 ~ 46
+                        gw = (Math.random() - 0.5) * 7.5;
+                    }
+                }
+
+                gunLocalOffsets[i3] = gu;
+                gunLocalOffsets[i3 + 1] = gv;
+                gunLocalOffsets[i3 + 2] = gw;
+                gunParticleTypes[i] = gtype;
+            }
+        }
+
+        initTemplates();
+
+        // ==========================================
+        // 4. Three.js 场景构建
+        // ==========================================
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        scene.fog = new THREE.FogExp2(0x030307, 0.0011);
+
+        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 2200);
+        camera.position.z = 420;
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        container.appendChild(renderer.domElement);
+
+        function createParticleTexture() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 64;
+            canvas.height = 64;
+            const ctx = canvas.getContext('2d');
+            const gradient = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
+            gradient.addColorStop(0, 'rgba(255, 255, 255, 1)');
+            gradient.addColorStop(0.25, 'rgba(240, 248, 255, 0.95)');
+            gradient.addColorStop(0.55, 'rgba(125, 211, 252, 0.45)');
+            gradient.addColorStop(0.85, 'rgba(192, 132, 252, 0.15)');
+            gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, 64, 64);
+            return new THREE.CanvasTexture(canvas);
+        }
+
+        const particleTexture = createParticleTexture();
+
+        const geometry = new THREE.BufferGeometry();
+        const positions = new Float32Array(PARTICLE_COUNT * 3);
+        const velocities = new Float32Array(PARTICLE_COUNT * 3);
+        const homePositions = new Float32Array(PARTICLE_COUNT * 3);
+        const baseColors = new Float32Array(PARTICLE_COUNT * 3);
+        const colors = new Float32Array(PARTICLE_COUNT * 3);
+        const sizes = new Float32Array(PARTICLE_COUNT);
+
+        function initParticlesTheme(theme) {
+            for (let i = 0; i < PARTICLE_COUNT; i++) {
+                const i3 = i * 3;
+
+                const armOffset = (i % 3) * ((Math.PI * 2) / 3);
+                const radius = Math.pow(Math.random(), 2.0) * 350 + 16;
+                const theta = armOffset + (radius * 0.012) + (Math.random() - 0.5) * 0.55;
+                const phi = (Math.random() - 0.5) * 0.32 * (320 / (radius + 25));
+
+                const x = radius * Math.cos(theta);
+                const y = radius * Math.sin(theta) * Math.sin(phi) + (Math.random() - 0.5) * 22;
+                const z = radius * Math.sin(theta) * Math.cos(phi);
+
+                positions[i3] = x;
+                positions[i3 + 1] = y;
+                positions[i3 + 2] = z;
+
+                homePositions[i3] = x;
+                homePositions[i3 + 1] = y;
+                homePositions[i3 + 2] = z;
+
+                velocities[i3] = (Math.random() - 0.5) * 0.35;
+                velocities[i3 + 1] = (Math.random() - 0.5) * 0.35;
+                velocities[i3 + 2] = (Math.random() - 0.5) * 0.35;
+
+                const distRatio = Math.min(radius / 320, 1.0);
+                const pColor = sampleThemeColor(theme, distRatio, theta * 2);
+
+                baseColors[i3] = pColor.r;
+                baseColors[i3 + 1] = pColor.g;
+                baseColors[i3 + 2] = pColor.b;
+
+                colors[i3] = pColor.r;
+                colors[i3 + 1] = pColor.g;
+                colors[i3 + 2] = pColor.b;
+
+                sizes[i] = Math.random() * 3.4 + 1.2;
+            }
+
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+            geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+        }
+
+        initParticlesTheme(THEMES[0]);
+
+        const material = new THREE.PointsMaterial({
+            size: 3.8,
+            map: particleTexture,
+            transparent: true,
+            blending: THREE.AdditiveBlending,
+            depthWrite: false,
+            vertexColors: true,
+            sizeAttenuation: true
+        });
+
+        const particleSystem = new THREE.Points(geometry, material);
+        scene.add(particleSystem);
+
+        function createCoreMesh(colorHex) {
+            const group = new THREE.Group();
+            const geo = new THREE.SphereGeometry(6, 16, 16);
+            const mat = new THREE.MeshBasicMaterial({
+                color: colorHex,
+                transparent: true,
+                opacity: 0,
+                blending: THREE.AdditiveBlending
+            });
+            const mesh = new THREE.Mesh(geo, mat);
+            group.add(mesh);
+
+            const ringGeo = new THREE.RingGeometry(12, 16, 32);
+            const ringMat = new THREE.MeshBasicMaterial({
+                color: colorHex,
+                transparent: true,
+                opacity: 0,
+                side: THREE.DoubleSide,
+                blending: THREE.AdditiveBlending
+            });
+            const ring = new THREE.Mesh(ringGeo, ringMat);
+            group.add(ring);
+
+            const flareGeo = new THREE.SphereGeometry(4.5, 16, 16);
+            const flareMat = new THREE.MeshBasicMaterial({
+                color: 0xffffff,
+                transparent: true,
+                opacity: 0,
+                blending: THREE.AdditiveBlending
+            });
+            const flare = new THREE.Mesh(flareGeo, flareMat);
+            group.add(flare);
+
+            scene.add(group);
+            return { group, mesh, mat, ring, ringMat, flare, flareMat };
+        }
+
+        const coreL = createCoreMesh(0x22d3ee);
+        const coreR = createCoreMesh(0xf43f5e);
+
+        const raycaster = new THREE.Raycaster();
+        const planeZ = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
+
+        function screenToWorld3D(screenX, screenY, outVec3) {
+            const rect = renderer.domElement.getBoundingClientRect();
+            const ndcX = ((screenX - rect.left) / rect.width) * 2 - 1;
+            const ndcY = -((screenY - rect.top) / rect.height) * 2 + 1;
+            raycaster.setFromCamera({ x: ndcX, y: ndcY }, camera);
+            const intersectPoint = new THREE.Vector3();
+            raycaster.ray.intersectPlane(planeZ, intersectPoint);
+            if (intersectPoint) {
+                outVec3.copy(intersectPoint);
+            }
+        }
+
+        // ==========================================
+        // 5. 开火系统：高能激光爆能弹与枪口光效 (Laser FX)
+        // ==========================================
+        const activeLaserBolts = [];
+        const activeShockwaves = [];
+
+        const MAX_LASER_MESHES = 12;
+        const laserBeamsGroup = new THREE.Group();
+        const laserMeshes = [];
+        
+        // 激光束几何体：内芯细长强光 + 外层等离子光晕
+        const boltCoreGeo = new THREE.CylinderGeometry(2.4, 2.4, 78, 8);
+        const boltGlowGeo = new THREE.CylinderGeometry(6.5, 6.5, 88, 8);
+
+        for (let i = 0; i < MAX_LASER_MESHES; i++) {
+            const bGroup = new THREE.Group();
+            
+            const coreMat = new THREE.MeshBasicMaterial({
+                color: 0xffffff,
+                transparent: true,
+                opacity: 0,
+                blending: THREE.AdditiveBlending
+            });
+            const coreMesh = new THREE.Mesh(boltCoreGeo, coreMat);
+            bGroup.add(coreMesh);
+
+            const glowMat = new THREE.MeshBasicMaterial({
+                color: 0x38bdf8,
+                transparent: true,
+                opacity: 0,
+                blending: THREE.AdditiveBlending
+            });
+            const glowMesh = new THREE.Mesh(boltGlowGeo, glowMat);
+            bGroup.add(glowMesh);
+
+            bGroup.visible = false;
+            laserBeamsGroup.add(bGroup);
+            laserMeshes.push({ group: bGroup, coreMesh, coreMat, glowMesh, glowMat });
+        }
+        scene.add(laserBeamsGroup);
+
+        // 枪口冲击闪光环 (Muzzle Flash)
+        const muzzleFlashGeo = new THREE.RingGeometry(6, 42, 24);
+        const muzzleFlashMat = new THREE.MeshBasicMaterial({
+            color: 0x38bdf8,
+            transparent: true,
+            opacity: 0,
+            side: THREE.DoubleSide,
+            blending: THREE.AdditiveBlending
+        });
+        const muzzleFlashMesh = new THREE.Mesh(muzzleFlashGeo, muzzleFlashMat);
+        muzzleFlashMesh.visible = false;
+        scene.add(muzzleFlashMesh);
+        let muzzleFlashLife = 0;
+
+        function shootLaserBolt(muzzlePos, dir) {
+            activeLaserBolts.push({
+                pos: muzzlePos.clone(),
+                dir: dir.clone().normalize(),
+                speed: 1950,
+                life: 1.0
+            });
+            recoilTime = 0.22; // 激发后坐力
+
+            // 激发枪口烈焰闪光
+            muzzleFlashMesh.position.copy(muzzlePos);
+            muzzleFlashMesh.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), dir.clone().normalize());
+            muzzleFlashMesh.scale.set(1.0, 1.0, 1.0);
+            muzzleFlashMat.opacity = 1.0;
+            muzzleFlashMesh.visible = true;
+            muzzleFlashLife = 0.12;
+
+            updateStatus('⚡ 砰！能量手枪开火，发射高能等离子激光爆能弹！', '#f87171');
+        }
+
+        function triggerClapShockwave(origin) {
+            const center = origin ? origin.clone() : new THREE.Vector3(0, 0, 0);
+            activeShockwaves.push({
+                center: center,
+                radius: 12,
+                speed: 820,
+                maxRadius: 920,
+                life: 1.0
+            });
+
+            const clapBadge = document.getElementById('badge-clap');
+            clapBadge.style.display = 'flex';
+            clapBadge.style.animation = 'pulse-dot 0.3s 3';
+            setTimeout(() => { clapBadge.style.display = 'none'; }, 1800);
+
+            updateStatus('👏 击掌引爆时空激波！36,000 粒子剧烈震荡共振！', '#facc15');
+        }
+
+        function triggerSupernova(origin) {
+            const posAttr = geometry.attributes.position.array;
+            const cx = origin ? origin.x : 0;
+            const cy = origin ? origin.y : 0;
+            const cz = origin ? origin.z : 0;
+
+            for (let i = 0; i < PARTICLE_COUNT; i++) {
+                const i3 = i * 3;
+                let dx = posAttr[i3] - cx;
+                let dy = posAttr[i3 + 1] - cy;
+                let dz = posAttr[i3 + 2] - cz;
+                let dist = Math.sqrt(dx * dx + dy * dy + dz * dz) + 0.1;
+
+                const burstPower = (Math.random() * 22 + 16) * (220 / (dist + 35));
+                velocities[i3] += (dx / dist) * burstPower + (Math.random() - 0.5) * 5;
+                velocities[i3 + 1] += (dy / dist) * burstPower + (Math.random() - 0.5) * 5;
+                velocities[i3 + 2] += (dz / dist) * burstPower + (Math.random() - 0.5) * 5;
+            }
+
+            coreL.mat.opacity = 1.0;
+            coreR.mat.opacity = 1.0;
+            updateStatus('💥 超新星爆发！能量释放星尘全屏飞溅...', '#f59e0b');
+        }
+
+        // ==========================================
+        // 6. 动画主循环：武器形态动力学演算
+        // ==========================================
+        let lastTime = performance.now();
+        let frameCount = 0;
+        let fpsTimer = performance.now();
+        const fpsEl = document.getElementById('fps-display');
+
+        const weaponOrigin = new THREE.Vector3();
+        const weaponDirU = new THREE.Vector3(0, 1, 0); // 主长轴
+        const weaponDirV = new THREE.Vector3(1, 0, 0); // 竖直轴/横向轴
+        const weaponDirW = new THREE.Vector3(0, 0, 1); // 法向厚度轴
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            const now = performance.now();
+            const dt = Math.min((now - lastTime) / 1000, 0.05);
+            lastTime = now;
+
+            frameCount++;
+            if (now - fpsTimer >= 500) {
+                const fps = Math.round((frameCount * 1000) / (now - fpsTimer));
+                fpsEl.textContent = `${fps} FPS (${(PARTICLE_COUNT / 1000).toFixed(0)}k 粒子)`;
+                frameCount = 0;
+                fpsTimer = now;
+            }
+
+            HANDS[0].smoothPos.lerp(HANDS[0].targetPos, 0.22);
+            HANDS[1].smoothPos.lerp(HANDS[1].targetPos, 0.22);
+            MOUSE.smoothPos.lerp(MOUSE.targetPos, 0.25);
+
+            // 1. 寻找当前激活的武器持有者 (优先手枪 GUN，其次神剑 SWORD)
+            let weaponHolder = null;
+            let targetWeaponType = 'NONE';
+
+            for (const h of [HANDS[1], HANDS[0], MOUSE]) {
+                if (!h.active && h !== MOUSE) continue;
+                if (h.gesture === GESTURES.GUN) {
+                    weaponHolder = h;
+                    targetWeaponType = 'GUN';
+                    break;
+                } else if (h.gesture === GESTURES.SWORD) {
+                    weaponHolder = h;
+                    targetWeaponType = 'SWORD';
+                    break;
+                }
+            }
+
+            if (currentWeapon !== targetWeaponType) {
+                if (currentWeapon !== 'NONE' && targetWeaponType === 'NONE') {
+                    triggerSupernova(weaponOrigin);
+                }
+                currentWeapon = targetWeaponType;
+                weaponProgress = 0.0;
+            }
+
+            if (currentWeapon !== 'NONE') {
+                weaponProgress = THREE.MathUtils.lerp(weaponProgress, 1.0, 0.15);
+            } else {
+                weaponProgress = THREE.MathUtils.lerp(weaponProgress, 0.0, 0.08);
+            }
+
+            // 更新后坐力时间
+            if (recoilTime > 0) {
+                recoilTime = Math.max(0, recoilTime - dt);
+            }
+
+            // 计算武器变换基准 (原点与方向向量)
+            if (weaponProgress > 0.01 && weaponHolder) {
+                weaponOrigin.copy(weaponHolder.smoothPos);
+
+                // 施加后坐力微量位移
+                if (recoilTime > 0) {
+                    weaponOrigin.addScaledVector(weaponDirU, -recoilTime * 45);
+                }
+
+                if (weaponHolder.aimDirection) {
+                    weaponDirU.copy(weaponHolder.aimDirection).normalize();
+                } else {
+                    weaponDirU.set(0.6, 0.8, 0).normalize();
+                }
+
+                if (currentWeapon === 'GUN') {
+                    // 🔫 手枪绝对正立算法：基于世界竖直轴 (0, 1, 0) 正交投影，确保套筒朝天、握把向下
+                    const worldUp = new THREE.Vector3(0, 1, 0);
+                    weaponDirV.copy(worldUp).addScaledVector(weaponDirU, -worldUp.dot(weaponDirU)).normalize();
+                    if (weaponDirV.lengthSq() < 0.01) {
+                        weaponDirV.set(0, 0, -1);
+                    }
+                    if (weaponDirV.y < 0) {
+                        weaponDirV.negate();
+                    }
+                    weaponDirW.crossVectors(weaponDirU, weaponDirV).normalize();
+                } else {
+                    // 🗡️ 神剑方向基准
+                    weaponDirV.set(-weaponDirU.y, weaponDirU.x, 0).normalize();
+                    if (weaponDirV.lengthSq() < 0.1) weaponDirV.set(0, 1, 0);
+                    weaponDirW.crossVectors(weaponDirU, weaponDirV).normalize();
+                }
+            }
+
+            function updateCoreVisuals(core, hand) {
+                if (!hand.active) {
+                    core.mat.opacity = THREE.MathUtils.lerp(core.mat.opacity, 0, 0.12);
+                    core.ringMat.opacity = THREE.MathUtils.lerp(core.ringMat.opacity, 0, 0.12);
+                    core.flareMat.opacity = THREE.MathUtils.lerp(core.flareMat.opacity, 0, 0.12);
+                    return;
+                }
+
+                core.group.position.copy(hand.smoothPos);
+
+                if (hand.gesture === GESTURES.GUN) {
+                    core.mat.opacity = THREE.MathUtils.lerp(core.mat.opacity, 1.0, 0.25);
+                    core.mesh.scale.lerp(new THREE.Vector3(1.5, 1.5, 1.5), 0.2);
+                    core.ringMat.opacity = THREE.MathUtils.lerp(core.ringMat.opacity, 0.8, 0.2);
+                    core.flareMat.opacity = THREE.MathUtils.lerp(core.flareMat.opacity, 1.0, 0.25);
+                    core.flare.scale.lerp(new THREE.Vector3(3.2, 3.2, 3.2), 0.2);
+                } else if (hand.gesture === GESTURES.SWORD) {
+                    core.mat.opacity = THREE.MathUtils.lerp(core.mat.opacity, 1.0, 0.25);
+                    core.mesh.scale.lerp(new THREE.Vector3(1.6, 1.6, 1.6), 0.2);
+                    core.flareMat.opacity = THREE.MathUtils.lerp(core.flareMat.opacity, 1.0, 0.25);
+                    core.flare.scale.lerp(new THREE.Vector3(3.4, 3.4, 3.4), 0.2);
+                } else if (hand.gesture === GESTURES.PINCH) {
+                    core.mat.opacity = THREE.MathUtils.lerp(core.mat.opacity, 0.9, 0.2);
+                    core.mesh.scale.lerp(new THREE.Vector3(1.8, 1.8, 1.8), 0.2);
+                    core.ringMat.opacity = THREE.MathUtils.lerp(core.ringMat.opacity, 0, 0.2);
+                    core.flareMat.opacity = THREE.MathUtils.lerp(core.flareMat.opacity, 0, 0.2);
+                } else if (hand.gesture === GESTURES.REPULSOR) {
+                    core.mat.opacity = THREE.MathUtils.lerp(core.mat.opacity, 0.35, 0.2);
+                    core.mesh.scale.lerp(new THREE.Vector3(1.0, 1.0, 1.0), 0.2);
+                    core.ringMat.opacity = THREE.MathUtils.lerp(core.ringMat.opacity, 0.85, 0.2);
+                    core.ring.scale.lerp(new THREE.Vector3(2.6, 2.6, 2.6), 0.2);
+                    core.ring.rotation.z += 0.05;
+                    core.flareMat.opacity = THREE.MathUtils.lerp(core.flareMat.opacity, 0, 0.2);
+                } else {
+                    core.mat.opacity = THREE.MathUtils.lerp(core.mat.opacity, 0, 0.1);
+                    core.ringMat.opacity = THREE.MathUtils.lerp(core.ringMat.opacity, 0, 0.1);
+                    core.flareMat.opacity = THREE.MathUtils.lerp(core.flareMat.opacity, 0, 0.1);
+                }
+            }
+
+            updateCoreVisuals(coreL, HANDS[0]);
+            updateCoreVisuals(coreR, HANDS[1]);
+
+            // 更新枪口烈焰闪光
+            if (muzzleFlashLife > 0) {
+                muzzleFlashLife -= dt;
+                const progress = Math.max(0, 1.0 - muzzleFlashLife / 0.12);
+                const flashScale = 1.0 + progress * 1.8;
+                muzzleFlashMesh.scale.set(flashScale, flashScale, flashScale);
+                muzzleFlashMat.opacity = Math.max(0, muzzleFlashLife / 0.12);
+                if (muzzleFlashLife <= 0) muzzleFlashMesh.visible = false;
+            }
+
+            // 推进飞行的激光弹与渲染3D高能光束
+            const yAxis = new THREE.Vector3(0, 1, 0);
+            for (let i = 0; i < MAX_LASER_MESHES; i++) {
+                if (i < activeLaserBolts.length) {
+                    const bolt = activeLaserBolts[i];
+                    const meshItem = laserMeshes[i];
+                    meshItem.group.visible = true;
+                    meshItem.group.position.copy(bolt.pos);
+                    meshItem.group.quaternion.setFromUnitVectors(yAxis, bolt.dir);
+                    const op = Math.min(1.0, bolt.life * 1.6);
+                    meshItem.coreMat.opacity = op;
+                    meshItem.glowMat.opacity = op * 0.85;
+                } else {
+                    laserMeshes[i].group.visible = false;
+                }
+            }
+
+            for (let b = activeLaserBolts.length - 1; b >= 0; b--) {
+                const bolt = activeLaserBolts[b];
+                bolt.pos.addScaledVector(bolt.dir, bolt.speed * dt);
+                bolt.life -= dt * 1.35;
+                if (bolt.life <= 0 || bolt.pos.length() > 1500) {
+                    activeLaserBolts.splice(b, 1);
+                }
+            }
+
+            // 推进激波
+            for (let w = activeShockwaves.length - 1; w >= 0; w--) {
+                const wave = activeShockwaves[w];
+                wave.radius += wave.speed * dt;
+                wave.life = Math.max(0, 1.0 - (wave.radius / wave.maxRadius));
+                if (wave.radius >= wave.maxRadius) {
+                    activeShockwaves.splice(w, 1);
+                }
+            }
+
+            const activeHands = [];
+            if (HANDS[0].active && weaponHolder !== HANDS[0]) activeHands.push(HANDS[0]);
+            if (HANDS[1].active && weaponHolder !== HANDS[1]) activeHands.push(HANDS[1]);
+            if (activeHands.length === 0 && MOUSE.active && MOUSE.gesture !== GESTURES.IDLE && weaponHolder !== MOUSE) activeHands.push(MOUSE);
+
+            const posAttr = geometry.attributes.position.array;
+            const colAttr = geometry.attributes.color.array;
+            const timeNowSec = now * 0.001;
+
+            // 36,000 粒子力场更新
+            for (let i = 0; i < PARTICLE_COUNT; i++) {
+                const i3 = i * 3;
+                let px = posAttr[i3], py = posAttr[i3 + 1], pz = posAttr[i3 + 2];
+                let vx = velocities[i3], vy = velocities[i3 + 1], vz = velocities[i3 + 2];
+
+                colAttr[i3] = THREE.MathUtils.lerp(colAttr[i3], baseColors[i3], 0.05);
+                colAttr[i3 + 1] = THREE.MathUtils.lerp(colAttr[i3 + 1], baseColors[i3 + 1], 0.05);
+                colAttr[i3 + 2] = THREE.MathUtils.lerp(colAttr[i3 + 2], baseColors[i3 + 2], 0.05);
+
+                let hasInteracted = false;
+
+                if (weaponProgress > 0.05) {
+                    hasInteracted = true;
+                    const morphStrength = weaponProgress;
+
+                    if (currentWeapon === 'GUN') {
+                        // 🔫【能量手枪形态】
+                        const gu = gunLocalOffsets[i3];
+                        const gv = gunLocalOffsets[i3 + 1];
+                        const gw = gunLocalOffsets[i3 + 2];
+                        const pType = gunParticleTypes[i];
+
+                        // 🔫 全部枪体粒子（套筒/枪管/扳机/握把/底托）100% 统一刚体空间变换，绝无脱节
+                        const tx = weaponOrigin.x + weaponDirU.x * gu + weaponDirV.x * gv + weaponDirW.x * gw;
+                        const ty = weaponOrigin.y + weaponDirU.y * gu + weaponDirV.y * gv + weaponDirW.y * gw;
+                        const tz = weaponOrigin.z + weaponDirU.z * gu + weaponDirV.z * gv + weaponDirW.z * gw;
+
+                        const dx = tx - px, dy = ty - py, dz = tz - pz;
+                        vx += dx * (0.28 * morphStrength);
+                        vy += dy * (0.28 * morphStrength);
+                        vz += dz * (0.28 * morphStrength);
+
+                        // 枪管内高速等离子螺旋环流
+                        if (pType === 0) {
+                            vx += (weaponDirV.x * gw - weaponDirW.x * gv) * 0.08;
+                            vy += (weaponDirV.y * gw - weaponDirW.y * gv) * 0.08;
+                            vz += (weaponDirV.z * gw - weaponDirW.z * gv) * 0.08;
+                        }
+
+                        vx *= (0.73 + (1.0 - morphStrength) * 0.18);
+                        vy *= (0.73 + (1.0 - morphStrength) * 0.18);
+                        vz *= (0.73 + (1.0 - morphStrength) * 0.18);
+
+                        // 枪体精细机械质感分色：
+                        if (pType === 0) {
+                            // 0. 扁平方形套筒 (钛金冷钢蓝，硬朗机械金属质感)
+                            colAttr[i3] = 0.32; colAttr[i3 + 1] = 0.68; colAttr[i3 + 2] = 0.96;
+                        } else if (pType === 1) {
+                            // 1. 高能加速枪管 (极光高亮白青，空心发光内膛)
+                            colAttr[i3] = 0.85; colAttr[i3 + 1] = 0.95; colAttr[i3 + 2] = 1.0;
+                        } else if (pType === 2) {
+                            // 2. 弧形扳机护圈与扳机 (能量绯红，整枪标志性灵魂视觉焦点)
+                            colAttr[i3] = 1.0; colAttr[i3 + 1] = 0.22; colAttr[i3 + 2] = 0.28;
+                        } else if (pType === 3) {
+                            // 3. 人体工学倾角握把与弹匣底托 (深空碳纤暗紫，沉稳握持质感)
+                            colAttr[i3] = 0.55; colAttr[i3 + 1] = 0.18; colAttr[i3 + 2] = 0.85;
+                        } else if (pType === 4) {
+                            // 4. 机械准星与照门 (战术荧光金黄，构成三点瞄准线)
+                            colAttr[i3] = 1.0; colAttr[i3 + 1] = 0.88; colAttr[i3 + 2] = 0.18;
+                        } else {
+                            // 5. 击锤与虎口托板 (炽烈火红，机械动作机构)
+                            colAttr[i3] = 0.98; colAttr[i3 + 1] = 0.38; colAttr[i3 + 2] = 0.18;
+                        }
+
+                    } else if (currentWeapon === 'SWORD') {
+                        // 🗡️【双指剑诀·神剑形态】
+                        const su = swordLocalOffsets[i3];
+                        const sv = swordLocalOffsets[i3 + 1];
+                        const sw = swordLocalOffsets[i3 + 2];
+                        const pType = swordParticleTypes[i];
+
+                        const tx = weaponOrigin.x + weaponDirU.x * su + weaponDirV.x * sv + weaponDirW.x * sw;
+                        const ty = weaponOrigin.y + weaponDirU.y * su + weaponDirV.y * sv + weaponDirW.y * sw;
+                        const tz = weaponOrigin.z + weaponDirU.z * su + weaponDirV.z * sv + weaponDirW.z * sw;
+
+                        const dx = tx - px, dy = ty - py, dz = tz - pz;
+                        vx += dx * (0.26 * morphStrength);
+                        vy += dy * (0.26 * morphStrength);
+                        vz += dz * (0.26 * morphStrength);
+
+                        const flowSpeed = (pType === 1 || pType === 0) ? 1.8 : 0.5;
+                        vx += weaponDirU.x * flowSpeed * morphStrength;
+                        vy += weaponDirU.y * flowSpeed * morphStrength;
+                        vz += weaponDirU.z * flowSpeed * morphStrength;
+
+                        vx *= (0.74 + (1.0 - morphStrength) * 0.18);
+                        vy *= (0.74 + (1.0 - morphStrength) * 0.18);
+                        vz *= (0.74 + (1.0 - morphStrength) * 0.18);
+
+                        const pulse = Math.sin(timeNowSec * 12.0 - su * 0.08) * 0.5 + 0.5;
+                        if (pType === 0) {
+                            colAttr[i3] = 0.85 + pulse * 0.15; colAttr[i3 + 1] = 0.95; colAttr[i3 + 2] = 1.0;
+                        } else if (pType === 2) {
+                            colAttr[i3] = 1.0; colAttr[i3 + 1] = 1.0; colAttr[i3 + 2] = 1.0;
+                        } else if (pType === 3) {
+                            colAttr[i3] = 1.0; colAttr[i3 + 1] = 0.85; colAttr[i3 + 2] = 0.25;
+                        } else {
+                            colAttr[i3] = 0.22 + pulse * 0.6; colAttr[i3 + 1] = 0.75 + pulse * 0.25; colAttr[i3 + 2] = 1.0;
+                        }
+                    }
+
+                } else if (activeHands.length > 0) {
+                    for (let h = 0; h < activeHands.length; h++) {
+                        const hand = activeHands[h];
+                        const gest = hand.gesture;
+
+                        if (gest === GESTURES.PINCH) {
+                            hasInteracted = true;
+                            const tx = hand.smoothPos.x, ty = hand.smoothPos.y, tz = hand.smoothPos.z;
+                            const dx = tx - px, dy = ty - py, dz = tz - pz;
+                            const distSq = dx * dx + dy * dy + dz * dz + 300;
+                            const dist = Math.sqrt(distSq);
+
+                            const force = 19500 / distSq;
+                            vx += (dx / dist) * force;
+                            vy += (dy / dist) * force;
+                            vz += (dz / dist) * force;
+
+                            const vortexSpeed = 1.3 * (260 / (dist + 45));
+                            vx += -dy * 0.008 * vortexSpeed;
+                            vy += dx * 0.008 * vortexSpeed;
+
+                            if (dist < 38) { vx *= 0.88; vy *= 0.88; vz *= 0.88; }
+                            else { vx *= 0.94; vy *= 0.94; vz *= 0.94; }
+
+                        } else if (gest === GESTURES.REPULSOR) {
+                            hasInteracted = true;
+                            const tx = hand.smoothPos.x, ty = hand.smoothPos.y, tz = hand.smoothPos.z;
+                            const dx = px - tx, dy = py - ty, dz = pz - tz;
+                            const distSq = dx * dx + dy * dy + dz * dz + 100;
+                            const dist = Math.sqrt(distSq);
+
+                            if (dist < 240) {
+                                const repulseForce = 32000 / distSq;
+                                vx += (dx / dist) * repulseForce;
+                                vy += (dy / dist) * repulseForce;
+                                vz += (dz / dist) * repulseForce;
+
+                                colAttr[i3] = Math.min(1.0, colAttr[i3] + 0.4);
+                                colAttr[i3 + 1] = Math.min(1.0, colAttr[i3 + 1] + 0.4);
+                                colAttr[i3 + 2] = Math.min(1.0, colAttr[i3 + 2] + 0.6);
+                            }
+                            vx *= 0.93; vy *= 0.93; vz *= 0.93;
+                        }
+                    }
+                }
+
+                // 激光穿透粒子扰动 (穿云激光射线)
+                if (activeLaserBolts.length > 0) {
+                    for (let b = 0; b < activeLaserBolts.length; b++) {
+                        const bolt = activeLaserBolts[b];
+                        const dx = px - bolt.pos.x, dy = py - bolt.pos.y, dz = pz - bolt.pos.z;
+                        const dist = Math.sqrt(dx * dx + dy * dy + dz * dz) + 0.1;
+                        if (dist < 55) {
+                            hasInteracted = true;
+                            const blastForce = (1.0 - dist / 55) * 22.0;
+                            vx += (dx / dist) * blastForce + bolt.dir.x * 12.0;
+                            vy += (dy / dist) * blastForce + bolt.dir.y * 12.0;
+                            vz += (dz / dist) * blastForce + bolt.dir.z * 12.0;
+                            colAttr[i3] = 1.0; colAttr[i3 + 1] = 0.9; colAttr[i3 + 2] = 0.3;
+                        }
+                    }
+                }
+
+                // 激波作用
+                if (activeShockwaves.length > 0) {
+                    for (let w = 0; w < activeShockwaves.length; w++) {
+                        const wave = activeShockwaves[w];
+                        const dx = px - wave.center.x, dy = py - wave.center.y, dz = pz - wave.center.z;
+                        const dist = Math.sqrt(dx * dx + dy * dy + dz * dz) + 0.1;
+                        const diff = Math.abs(dist - wave.radius);
+
+                        if (diff < 45) {
+                            hasInteracted = true;
+                            const shockForce = (1.0 - diff / 45) * 18.0 * wave.life;
+                            vx += (dx / dist) * shockForce;
+                            vy += (dy / dist) * shockForce;
+                            vz += (dz / dist) * shockForce + (Math.random() - 0.5) * 4;
+                            colAttr[i3] = 1.0; colAttr[i3 + 1] = 0.9; colAttr[i3 + 2] = 0.4;
+                        }
+                    }
+                }
+
+                if (!hasInteracted) {
+                    const hx = homePositions[i3];
+                    const hy = homePositions[i3 + 1];
+                    const hz = homePositions[i3 + 2];
+
+                    vx += (hx - px) * 0.0032;
+                    vy += (hy - py) * 0.0032;
+                    vz += (hz - pz) * 0.0032;
+
+                    vx *= 0.96;
+                    vy *= 0.96;
+                    vz *= 0.96;
+                }
+
+                posAttr[i3] = px + vx;
+                posAttr[i3 + 1] = py + vy;
+                posAttr[i3 + 2] = pz + vz;
+                velocities[i3] = vx;
+                velocities[i3 + 1] = vy;
+                velocities[i3 + 2] = vz;
+            }
+
+            if (currentWeapon === 'NONE' && activeHands.length === 0) {
+                particleSystem.rotation.z += 0.0009;
+                particleSystem.rotation.y += 0.0004;
+            }
+
+            geometry.attributes.position.needsUpdate = true;
+            geometry.attributes.color.needsUpdate = true;
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+        // ==========================================
+        // 7. MediaPipe 高精自适应手势解算器 (支持手枪/神剑/光剑/斥力)
+        // ==========================================
+        const videoElement = document.getElementById('input-video');
+        const pipCanvas = document.getElementById('pip-canvas');
+        const pipCtx = pipCanvas.getContext('2d');
+        const statusText = document.getElementById('status-text');
+        const statusDot = document.getElementById('status-dot');
+        const badgeLeft = document.getElementById('badge-left');
+        const badgeRight = document.getElementById('badge-right');
+        const badgeLeftText = document.getElementById('badge-left-text');
+        const badgeRightText = document.getElementById('badge-right-text');
+
+        function hideLoader() {
+            const loader = document.getElementById('loader');
+            if (loader && loader.style.opacity !== '0') {
+                loader.style.opacity = '0';
+                setTimeout(() => loader.style.display = 'none', 600);
+            }
+        }
+        setTimeout(hideLoader, 2000);
+
+        function updateStatus(text, color = '#38bdf8') {
+            statusText.textContent = text;
+            statusDot.style.backgroundColor = color;
+            statusDot.style.boxShadow = `0 0 14px ${color}`;
+        }
+
+        const HAND_CONNECTIONS = [
+            [0,1],[1,2],[2,3],[3,4],
+            [0,5],[5,6],[6,7],[7,8],
+            [5,9],[9,10],[10,11],[11,12],
+            [9,13],[13,14],[14,15],[15,16],
+            [13,17],[17,18],[18,19],[19,20],
+            [0,17]
+        ];
+
+        let lastHandsDist = 999;
+        let lastClapTimestamp = 0;
+
+        function detectHandPose(landmarks) {
+            const wrist = landmarks[0];
+            const thumbTip = landmarks[4];
+            const indexTip = landmarks[8];
+            const indexPip = landmarks[6];
+            const middleTip = landmarks[12];
+            const middlePip = landmarks[10];
+            const ringTip = landmarks[16];
+            const pinkyTip = landmarks[20];
+            const middleMcp = landmarks[9];
+
+            const palmScale = Math.hypot(middleMcp.x - wrist.x, middleMcp.y - wrist.y) + 0.0001;
+
+            const distWrist = (pt) => Math.hypot(pt.x - wrist.x, pt.y - wrist.y);
+            const rThumb = distWrist(thumbTip) / palmScale;
+            const rIndex = distWrist(indexTip) / palmScale;
+            const rMiddle = distWrist(middleTip) / palmScale;
+            const rRing = distWrist(ringTip) / palmScale;
+            const rPinky = distWrist(pinkyTip) / palmScale;
+
+            const pinchDistRel = Math.hypot(thumbTip.x - indexTip.x, thumbTip.y - indexTip.y) / palmScale;
+
+            // 1. 捏合判定 (黑洞吸附)
+            if (pinchDistRel < 0.32) {
+                return GESTURES.PINCH;
+            }
+
+            const isIndexExt = (rIndex > 1.25) && (distWrist(indexTip) > distWrist(indexPip) * 1.04);
+            const isMiddleExt = (rMiddle > 1.25) && (distWrist(middleTip) > distWrist(middlePip) * 1.04);
+            const areRingPinkyCurled = (rRing < 1.15 || rRing < rIndex * 0.76) && 
+                                    (rPinky < 1.15 || rPinky < rIndex * 0.76);
+
+            // 2. 🔫 拇指与食指手枪姿势判定 (Finger Gun)
+            // 食指伸直向前，大拇指耸立竖起，且拇指与食指分开 (非捏合)
+            // 中指、无名指、小指全部蜷缩扣紧在掌心
+            const isThumbErect = (rThumb > 1.05) && (pinchDistRel > 0.65);
+            const isMiddleCurled = (rMiddle < 1.15 || rMiddle < rIndex * 0.76);
+
+            if (isIndexExt && isThumbErect && isMiddleCurled && areRingPinkyCurled) {
+                return GESTURES.GUN;
+            }
+
+            // 3. 🗡️ 食指+中指双指剑诀判定 (Sword)
+            if (isIndexExt && isMiddleExt && areRingPinkyCurled) {
+                return GESTURES.SWORD;
+            }
+
+            // 4. 👉 单指画星轨 (Pointer)
+            if (isIndexExt && isMiddleCurled && areRingPinkyCurled) {
+                return GESTURES.POINTER;
+            }
+
+            // 5. 🖐️ 五指完全张开
+            const avgSpanRel = (rThumb + rIndex + rMiddle + rRing + rPinky) / 5;
+            if (avgSpanRel > 1.38) {
+                return GESTURES.REPULSOR;
+            }
+
+            // 6. ✊ 握拳
+            if (avgSpanRel < 0.95) {
+                return GESTURES.FIST;
+            }
+
+            return GESTURES.IDLE;
+        }
+
+        const gestureLabels = {
+            [GESTURES.PINCH]: '🤏 引力黑洞',
+            [GESTURES.POINTER]: '👉 单指画星轨',
+            [GESTURES.SWORD]: '🗡️ 2指剑诀(神剑)',
+            [GESTURES.GUN]: '🔫 能量手枪(瞄准)',
+            [GESTURES.REPULSOR]: '🖐️ 掌心斥力盾',
+            [GESTURES.FIST]: '✊ 凝聚蓄力',
+            [GESTURES.IDLE]: '✋ 自然巡航'
+        };
+
+        function onHandResults(results) {
+            hideLoader();
+
+            if (mockGestureActive) {
+                return;
+            }
+
+            pipCanvas.width = pipCanvas.clientWidth;
+            pipCanvas.height = pipCanvas.clientHeight;
+            pipCtx.clearRect(0, 0, pipCanvas.width, pipCanvas.height);
+
+            if (results.image) {
+                pipCtx.save();
+                pipCtx.globalAlpha = 0.85;
+                pipCtx.drawImage(results.image, 0, 0, pipCanvas.width, pipCanvas.height);
+                pipCtx.restore();
+            }
+
+            const multiLandmarks = results.multiHandLandmarks || [];
+            const numHands = multiLandmarks.length;
+
+            if (numHands === 0) {
+                if (MOUSE.active && MOUSE.gesture !== GESTURES.IDLE) {
+                    badgeLeft.classList.add('active-badge');
+                    badgeLeftText.textContent = `模拟: ${gestureLabels[MOUSE.gesture] || ''}`;
+                    badgeRight.classList.remove('active-badge');
+                    badgeRightText.textContent = '手部: 待命';
+                } else {
+                    HANDS[0].active = false;
+                    HANDS[1].active = false;
+                    badgeLeftText.textContent = '手部 1: 等待感应';
+                    badgeRightText.textContent = '手部 2: 等待感应';
+                    badgeLeft.classList.remove('active-badge', 'badge-weapon-active');
+                    badgeRight.classList.remove('active-badge', 'badge-weapon-active');
+                    if (!MOUSE.active) {
+                        updateStatus('🔍 请将手置于摄像头前：拇指+食指变手枪，食指+中指化神剑...', '#94a3b8');
+                    }
+                }
+                return;
+            }
+
+            const parsed = [];
+            for (let i = 0; i < Math.min(numHands, 2); i++) {
+                const landmarks = multiLandmarks[i];
+                const thumbTip = landmarks[4];
+                const indexTip = landmarks[8];
+                const middleTip = landmarks[12];
+                const wrist = landmarks[0];
+
+                const canvasRect = renderer.domElement.getBoundingClientRect();
+                const palmMidX = canvasRect.left + (1.0 - (wrist.x + indexTip.x) / 2) * canvasRect.width;
+                const palmMidY = canvasRect.top + ((wrist.y + indexTip.y) / 2) * canvasRect.height;
+
+                const wristScreenX = canvasRect.left + (1.0 - wrist.x) * canvasRect.width;
+                const wristScreenY = canvasRect.top + wrist.y * canvasRect.height;
+
+                const thumbTipScreenX = canvasRect.left + (1.0 - thumbTip.x) * canvasRect.width;
+                const thumbTipScreenY = canvasRect.top + thumbTip.y * canvasRect.height;
+
+                const indexTipScreenX = canvasRect.left + (1.0 - indexTip.x) * canvasRect.width;
+                const indexTipScreenY = canvasRect.top + indexTip.y * canvasRect.height;
+
+                const middleTipScreenX = canvasRect.left + (1.0 - middleTip.x) * canvasRect.width;
+                const middleTipScreenY = canvasRect.top + middleTip.y * canvasRect.height;
+
+                const gesture = detectHandPose(landmarks);
+
+                parsed.push({
+                    landmarks,
+                    screenX: palmMidX,
+                    screenY: palmMidY,
+                    wristScreenX,
+                    wristScreenY,
+                    thumbTipX: thumbTipScreenX,
+                    thumbTipY: thumbTipScreenY,
+                    indexTipX: indexTipScreenX,
+                    indexTipY: indexTipScreenY,
+                    middleTipX: middleTipScreenX,
+                    middleTipY: middleTipScreenY,
+                    gesture
+                });
+            }
+
+            parsed.sort((a, b) => a.screenX - b.screenX);
+
+            const nowTime = performance.now();
+            if (parsed.length >= 2) {
+                const hA = parsed[0], hB = parsed[1];
+                const curDist = Math.hypot(hA.screenX - hB.screenX, hA.screenY - hB.screenY);
+                if (lastHandsDist > 140 && curDist < 65 && (nowTime - lastClapTimestamp > 800)) {
+                    const clapWorldPos = new THREE.Vector3();
+                    screenToWorld3D((hA.screenX + hB.screenX) / 2, (hA.screenY + hB.screenY) / 2, clapWorldPos);
+                    triggerClapShockwave(clapWorldPos);
+                    lastClapTimestamp = nowTime;
+                }
+                lastHandsDist = curDist;
+            } else {
+                lastHandsDist = 999;
+            }
+
+            let anyGunActive = false;
+            let anySwordActive = false;
+
+            for (let i = 0; i < 2; i++) {
+                const h = HANDS[i];
+                const badgeEl = (i === 0) ? badgeLeft : badgeRight;
+                const textEl = (i === 0) ? badgeLeftText : badgeRightText;
+                const handName = (numHands === 1) ? '当前手' : (i === 0 ? '左侧手' : '右侧手');
+
+                if (i < parsed.length) {
+                    const data = parsed[i];
+                    h.active = true;
+                    h.gesture = data.gesture;
+                    h.screenX = data.screenX;
+                    h.screenY = data.screenY;
+
+                    screenToWorld3D(data.screenX, data.screenY, h.targetPos);
+                    screenToWorld3D(data.wristScreenX, data.wristScreenY, h.wristWorld);
+                    screenToWorld3D(data.thumbTipX, data.thumbTipY, h.thumbTipWorld);
+                    screenToWorld3D(data.indexTipX, data.indexTipY, h.indexTipWorld);
+                    screenToWorld3D(data.middleTipX, data.middleTipY, h.middleTipWorld);
+
+                    // 瞄准矢量计算
+                    if (h.gesture === GESTURES.GUN) {
+                        // 手枪朝向：从食指根到食指尖
+                        if (h.targetPos.distanceTo(h.indexTipWorld) > 5) {
+                            h.aimDirection.subVectors(h.indexTipWorld, h.targetPos).normalize();
+                        }
+                    } else if (h.gesture === GESTURES.SWORD) {
+                        // 神剑朝向：手腕到双指尖中点
+                        h.swordTipsMidWorld.addVectors(h.indexTipWorld, h.middleTipWorld).multiplyScalar(0.5);
+                        if (h.wristWorld.distanceTo(h.swordTipsMidWorld) > 5) {
+                            h.aimDirection.subVectors(h.swordTipsMidWorld, h.wristWorld).normalize();
+                        }
+                    }
+
+                    // 绘制画中画骨骼
+                    const landmarks = data.landmarks;
+                    pipCtx.lineWidth = 3.0;
+                    pipCtx.strokeStyle = h.boneCol;
+                    for (const [s, e] of HAND_CONNECTIONS) {
+                        const p1 = landmarks[s], p2 = landmarks[e];
+                        pipCtx.beginPath();
+                        pipCtx.moveTo(p1.x * pipCanvas.width, p1.y * pipCanvas.height);
+                        pipCtx.lineTo(p2.x * pipCanvas.width, p2.y * pipCanvas.height);
+                        pipCtx.stroke();
+                    }
+
+                    for (let k = 0; k < landmarks.length; k++) {
+                        const pt = landmarks[k];
+                        pipCtx.beginPath();
+                        pipCtx.arc(pt.x * pipCanvas.width, pt.y * pipCanvas.height, (k === 4 || k === 8 ? 7.5 : 3.8), 0, 2 * Math.PI);
+                        pipCtx.fillStyle = (k === 4 || k === 8 ? '#f87171' : h.tipCol);
+                        pipCtx.fill();
+                    }
+
+                    // 🔫 手枪检测与开火判定
+                    if (h.gesture === GESTURES.GUN) {
+                        anyGunActive = true;
+
+                        // 在画中画绘制枪口激光准星线
+                        pipCtx.save();
+                        pipCtx.beginPath();
+                        const pMuzzle = landmarks[8];
+                        pipCtx.arc(pMuzzle.x * pipCanvas.width, pMuzzle.y * pipCanvas.height, 9, 0, 2 * Math.PI);
+                        pipCtx.strokeStyle = '#ef4444';
+                        pipCtx.lineWidth = 3.5;
+                        pipCtx.stroke();
+                        pipCtx.restore();
+
+                        // 检测扣动扳机（拇指下压/扣动动作）
+                        const thumbDistToMcp = Math.hypot(landmarks[4].x - landmarks[5].x, landmarks[4].y - landmarks[5].y);
+                        const isThumbDown = (landmarks[4].y > landmarks[3].y) || (thumbDistToMcp < 0.125);
+                        if (isThumbDown && !h.lastThumbDown) {
+                            // 扣动扳机射击！
+                            const muzzleWorldPos = h.indexTipWorld.clone().addScaledVector(h.aimDirection, 180);
+                            shootLaserBolt(muzzleWorldPos, h.aimDirection);
+                        }
+                        h.lastThumbDown = isThumbDown;
+
+                        badgeEl.classList.add('active-badge', 'badge-weapon-active');
+                        textEl.textContent = `${handName}: 🔫 能量手枪 (瞄准/下压开火)`;
+
+                    } else if (h.gesture === GESTURES.SWORD) {
+                        anySwordActive = true;
+                        badgeEl.classList.add('active-badge', 'badge-weapon-active');
+                        textEl.textContent = `${handName}: 🗡️ 2指剑诀 (神剑唤醒)`;
+                    } else {
+                        badgeEl.classList.remove('badge-weapon-active');
+                        badgeEl.classList.add('active-badge');
+                        textEl.textContent = `${handName}: ${gestureLabels[h.gesture] || '✋'}`;
+                    }
+
+                    if (h.gesture === GESTURES.PINCH) {
+                        h.wasPinching = true;
+                        h.lastPinchTime = nowTime;
+                    } else if (h.gesture === GESTURES.REPULSOR && h.wasPinching) {
+                        triggerSupernova(h.smoothPos);
+                        h.wasPinching = false;
+                    } else if (nowTime - h.lastPinchTime > 400) {
+                        h.wasPinching = false;
+                    }
+
+                } else {
+                    h.active = false;
+                    h.gesture = GESTURES.IDLE;
+                    badgeEl.classList.remove('active-badge', 'badge-weapon-active');
+                    textEl.textContent = `${handName}: 待命`;
+                }
+            }
+
+            if (anyGunActive) {
+                updateStatus('🔫 能量手枪已激活！食指瞄准，拇指下压(或点击鼠标/空格)极速开火！', '#f87171');
+            } else if (anySwordActive) {
+                updateStatus('🗡️ 两指剑诀已激活！36,000 粒子凝聚成神剑，随指尖挥舞劈砍！', '#facc15');
+            } else if (HANDS[0].active && HANDS[1].active) {
+                if (HANDS[0].gesture === GESTURES.PINCH && HANDS[1].gesture === GESTURES.PINCH) {
+                    updateStatus('🌌 双手双星引力吸积盘 (时空虫洞桥梁拉伸中)', '#38bdf8');
+                } else if (HANDS[0].gesture === GESTURES.REPULSOR && HANDS[1].gesture === GESTURES.REPULSOR) {
+                    updateStatus('🛡️ 双掌反引力冲击波！全屏排斥拨开星海', '#34d399');
+                } else {
+                    updateStatus('👐 拇指+食指变手枪 ｜ 食指+中指化神剑 ｜ 张掌推波 ｜ 击掌激波', '#c084fc');
+                }
+            } else if (HANDS[0].active || HANDS[1].active) {
+                const activeHand = HANDS[0].active ? HANDS[0] : HANDS[1];
+                if (activeHand.gesture === GESTURES.POINTER) {
+                    updateStatus('👉 单指流星光剑：在太空中挥舞划出彗尾星轨', '#facc15');
+                } else if (activeHand.gesture === GESTURES.REPULSOR) {
+                    updateStatus('🖐️ 掌心反引力斥力盾 (浪潮般推开星尘)', '#34d399');
+                } else if (activeHand.gesture === GESTURES.PINCH) {
+                    updateStatus('🤏 引力黑洞旋涡吸附中', '#38bdf8');
+                }
+            }
+        }
+
+        const hands = new Hands({
+            locateFile: (file) => `https://fastly.jsdelivr.net/npm/@mediapipe/hands/${file}`
+        });
+
+        hands.setOptions({
+            maxNumHands: 2,
+            modelComplexity: 1,
+            minDetectionConfidence: 0.6,
+            minTrackingConfidence: 0.55
+        });
+
+        hands.onResults(onHandResults);
+
+        const cameraUtils = new Camera(videoElement, {
+            onFrame: async () => {
+                await hands.send({ image: videoElement });
+            },
+            width: 640,
+            height: 480
+        });
+
+        cameraUtils.start().catch(err => {
+            console.error('Camera Error:', err);
+            updateStatus('⚠️ 无法访问摄像头，已开启鼠标与按键模拟互动模式', '#ef4444');
+            hideLoader();
+        });
+
+        // ==========================================
+        // 8. 鼠标与快捷键交互
+        // ==========================================
+        window.addEventListener('mousemove', (e) => {
+            if (!HANDS[0].active && !HANDS[1].active) {
+                MOUSE.active = true;
+                screenToWorld3D(e.clientX, e.clientY, MOUSE.targetPos);
+                MOUSE.indexTipWorld.copy(MOUSE.targetPos).add(new THREE.Vector3(25, 20, 0));
+                MOUSE.thumbTipWorld.copy(MOUSE.targetPos).add(new THREE.Vector3(-10, 25, 0));
+                MOUSE.middleTipWorld.copy(MOUSE.targetPos).add(new THREE.Vector3(25, 22, 0));
+                MOUSE.swordTipsMidWorld.copy(MOUSE.targetPos).add(new THREE.Vector3(25, 21, 0));
+                MOUSE.wristWorld.copy(MOUSE.targetPos).sub(new THREE.Vector3(20, 15, 0));
+            }
+        });
+
+        window.addEventListener('mousedown', (e) => {
+            // 如果手枪模式激活，点击直接开火！
+            if (currentWeapon === 'GUN') {
+                const muzzleWorldPos = weaponOrigin.clone().addScaledVector(weaponDirU, 180).addScaledVector(weaponDirV, 16.5);
+                shootLaserBolt(muzzleWorldPos, weaponDirU);
+                return;
+            }
+
+            if (!HANDS[0].active && !HANDS[1].active) {
+                MOUSE.active = true;
+                if (e.button === 0) {
+                    if (MOUSE.gesture !== GESTURES.SWORD && MOUSE.gesture !== GESTURES.GUN) {
+                        MOUSE.gesture = GESTURES.PINCH;
+                        updateStatus('✨ 鼠标模拟：引力黑洞吸附', '#38bdf8');
+                    }
+                } else if (e.button === 2) {
+                    MOUSE.gesture = GESTURES.REPULSOR;
+                    updateStatus('🖐️ 鼠标右键模拟：掌心时空斥力盾', '#34d399');
+                }
+            }
+        });
+
+        window.addEventListener('contextmenu', (e) => e.preventDefault());
+
+        window.addEventListener('mouseup', (e) => {
+            if (!HANDS[0].active && !HANDS[1].active) {
+                if (MOUSE.gesture === GESTURES.PINCH && e.button === 0) {
+                    triggerSupernova(MOUSE.smoothPos);
+                    MOUSE.gesture = GESTURES.IDLE;
+                } else if (MOUSE.gesture === GESTURES.REPULSOR && e.button === 2) {
+                    MOUSE.gesture = GESTURES.IDLE;
+                }
+                // 注意：SWORD 与 GUN 形态保持常驻，由再次点击对应按钮或按 S/G 键切换退出
+            }
+        });
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key.toLowerCase() === 'h') {
+                toggleCleanMode();
+                return;
+            } else if (e.key.toLowerCase() === 'r') {
+                toggleRecording();
+                return;
+            }
+
+            if (e.key === ' ' || e.key.toLowerCase() === 'f') {
+                // 空格或 F 键：开火
+                if (currentWeapon === 'GUN') {
+                    const muzzleWorldPos = weaponOrigin.clone().addScaledVector(weaponDirU, 180).addScaledVector(weaponDirV, 16.5);
+                    shootLaserBolt(muzzleWorldPos, weaponDirU);
+                } else {
+                    triggerClapShockwave(new THREE.Vector3(0, 0, 0));
+                }
+            } else if (e.key === '6' || e.key.toLowerCase() === 'g') {
+                // G 键：切换能量手枪形态
+                if (MOUSE.gesture === GESTURES.GUN) {
+                    MOUSE.gesture = GESTURES.IDLE;
+                    updateStatus('✨ 手枪解除，繁星散开...', '#38bdf8');
+                } else {
+                    MOUSE.active = true;
+                    MOUSE.gesture = GESTURES.GUN;
+                    MOUSE.targetPos.set(-20, 80, 0);
+                    MOUSE.smoothPos.set(-20, 80, 0);
+                    MOUSE.aimDirection.set(0.85, 0.45, 0).normalize();
+                    updateStatus('🔫 能量手枪已激活！点击鼠标或按空格开火！', '#f87171');
+                }
+            } else if (e.key === '5' || e.key.toLowerCase() === 's') {
+                // S 键：切换神剑形态
+                if (MOUSE.gesture === GESTURES.SWORD) {
+                    MOUSE.gesture = GESTURES.IDLE;
+                    updateStatus('✨ 神剑解除，繁星散落...', '#38bdf8');
+                } else {
+                    MOUSE.active = true;
+                    MOUSE.gesture = GESTURES.SWORD;
+                    MOUSE.targetPos.set(0, -60, 0);
+                    MOUSE.smoothPos.set(0, -60, 0);
+                    MOUSE.aimDirection.set(0.4, 0.9, 0).normalize();
+                    updateStatus('🗡️ 2指剑诀已激活！36,000 颗星尘粒子凝聚成神剑！', '#facc15');
+                }
+            } else if (e.key === '1') {
+                MOUSE.active = true;
+                MOUSE.gesture = GESTURES.POINTER;
+                updateStatus('👉 键盘[1]模拟：单指流星划轨', '#facc15');
+            } else if (e.key === '2') {
+                MOUSE.active = true;
+                MOUSE.gesture = GESTURES.REPULSOR;
+                updateStatus('🖐️ 键盘[2]模拟：掌心时空斥力盾开启', '#34d399');
+            } else if (e.key === '3') {
+                MOUSE.active = true;
+                MOUSE.gesture = GESTURES.PINCH;
+                updateStatus('🤏 键盘[3]模拟：引力黑洞吸附开启', '#38bdf8');
+            } else if (e.key === '4') {
+                triggerClapShockwave(new THREE.Vector3(0, 0, 0));
+            }
+        });
+
+        window.addEventListener('keyup', (e) => {
+            if (['1','2','3'].includes(e.key)) {
+                if (MOUSE.gesture === GESTURES.PINCH) triggerSupernova(MOUSE.smoothPos);
+                MOUSE.gesture = GESTURES.IDLE;
+            }
+        });
+
+                // 画中画尺寸切换 (360px 默认 vs 520px 超大特写)
+        const pipBox = document.getElementById('camera-pip-box');
+        const pipSizeBtn = document.getElementById('btn-pip-size');
+        
+        function togglePipSize() {
+            pipBox.classList.toggle('pip-expanded');
+            const isExpanded = pipBox.classList.contains('pip-expanded');
+            if (pipSizeBtn) {
+                pipSizeBtn.textContent = isExpanded ? '⤡ 还原' : '⤢ 放大';
+            }
+            updateStatus(isExpanded ? '🔍 画中画已切换至超大特写巨幕模式 (细节拉满！)' : '🔍 画中画已恢复标准高清尺寸', '#38bdf8');
+        }
+
+        if (pipSizeBtn) {
+            pipSizeBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                togglePipSize();
+            });
+        }
+
+        pipBox.addEventListener('dblclick', (e) => {
+            e.stopPropagation();
+            togglePipSize();
+        });
+
+        
+        // ==========================================
+        // 9. 短视频视口切换、安全区与一键 60FPS 录屏系统
+        // ==========================================
+        let currentAspectMode = 'DESKTOP'; // 'DESKTOP' | 'DOUYIN' | 'XIAOHONGSHU'
+        let isCleanMode = false;
+        let showSafeOverlay = false;
+
+        let mediaRecorder = null;
+        let recordedChunks = [];
+        let recordStartTime = 0;
+        let recordTimerInterval = null;
+
+        function applyAspectMode(mode) {
+            currentAspectMode = mode;
+            const container = document.getElementById('canvas-container');
+            const pipBox = document.getElementById('camera-pip-box');
+            const aspectBtn = document.getElementById('btn-aspect');
+            const safeZoneBtn = document.getElementById('btn-safe-zone');
+            const safeOverlay = document.getElementById('mobile-safe-overlay');
+
+            let targetW = window.innerWidth;
+            let targetH = window.innerHeight;
+            let cameraZ = 420;
+
+            if (mode === 'DOUYIN') {
+                // 📱 9:16 抖音竖屏沉浸满屏 (以屏幕高为基准计算 9:16 宽)
+                targetW = Math.min(window.innerWidth, Math.round(window.innerHeight * (9 / 16)));
+                targetH = window.innerHeight;
+                cameraZ = 540; // 适当拉远，让 275px 巨型手炮与神剑在竖屏中气势磅礴地完整展现
+                aspectBtn.textContent = '📱 抖音 9:16';
+                safeZoneBtn.style.display = 'flex';
+                pipBox.classList.add('pip-mobile-layout');
+                container.classList.add('container-framed');
+                safeOverlay.className = showSafeOverlay ? 'safe-overlay-douyin' : '';
+                updateStatus('📱 已切换至【抖音 9:16 沉浸竖屏】，画中画已居中置底呈现！', '#38bdf8');
+            } else if (mode === 'XIAOHONGSHU') {
+                // 📕 3:4 小红书黄金比例
+                targetW = Math.min(window.innerWidth, Math.round(window.innerHeight * (3 / 4)));
+                targetH = window.innerHeight;
+                cameraZ = 490;
+                aspectBtn.textContent = '📕 小红书 3:4';
+                safeZoneBtn.style.display = 'flex';
+                pipBox.classList.add('pip-mobile-layout');
+                container.classList.add('container-framed');
+                safeOverlay.className = showSafeOverlay ? 'safe-overlay-xhs' : '';
+                updateStatus('📕 已切换至【小红书 3:4 黄金画幅】，画中画已居中置底呈现！', '#f43f5e');
+            } else {
+                // 🖥️ 全屏桌面
+                targetW = window.innerWidth;
+                targetH = window.innerHeight;
+                cameraZ = 420;
+                aspectBtn.textContent = '🖥️ 全屏桌面';
+                safeZoneBtn.style.display = 'none';
+                pipBox.classList.remove('pip-mobile-layout');
+                container.classList.remove('container-framed');
+                safeOverlay.className = '';
+                updateStatus('🖥️ 已切换至【全屏桌面模式】', '#38bdf8');
+            }
+
+            container.style.width = targetW + 'px';
+            container.style.height = targetH + 'px';
+
+            camera.aspect = targetW / targetH;
+            camera.position.z = cameraZ;
+            camera.updateProjectionMatrix();
+            renderer.setSize(targetW, targetH);
+        }
+
+        document.getElementById('btn-aspect').addEventListener('click', () => {
+            if (currentAspectMode === 'DESKTOP') {
+                applyAspectMode('DOUYIN');
+            } else if (currentAspectMode === 'DOUYIN') {
+                applyAspectMode('XIAOHONGSHU');
+            } else {
+                applyAspectMode('DESKTOP');
+            }
+        });
+
+        document.getElementById('btn-safe-zone').addEventListener('click', () => {
+            showSafeOverlay = !showSafeOverlay;
+            const safeOverlay = document.getElementById('mobile-safe-overlay');
+            if (currentAspectMode === 'DOUYIN') {
+                safeOverlay.className = showSafeOverlay ? 'safe-overlay-douyin' : '';
+            } else if (currentAspectMode === 'XIAOHONGSHU') {
+                safeOverlay.className = showSafeOverlay ? 'safe-overlay-xhs' : '';
+            }
+            updateStatus(showSafeOverlay ? '🛡️ 安全区指示线已开启（避开点赞栏与字幕）' : '🛡️ 安全区指示线已隐藏', '#facc15');
+        });
+
+        // 纯净无 UI 录制模式 (按 H 键触发)
+        function toggleCleanMode() {
+            isCleanMode = !isCleanMode;
+            document.body.classList.toggle('clean-mode-active', isCleanMode);
+            const uiIds = ['bottom-controls', 'hint-overlay', 'btn-pip-size', 'hud-top', 'gesture-badges', 'mobile-safe-overlay'];
+            uiIds.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.style.display = isCleanMode ? 'none' : '';
+            });
+
+            // 退出纯净模式时，若之前开启了安全区，恢复安全区的 class
+            if (!isCleanMode && showSafeOverlay) {
+                const safeOverlay = document.getElementById('mobile-safe-overlay');
+                if (safeOverlay) {
+                    safeOverlay.style.display = '';
+                    if (currentAspectMode === 'DOUYIN') safeOverlay.className = 'safe-overlay-douyin';
+                    else if (currentAspectMode === 'XIAOHONGSHU') safeOverlay.className = 'safe-overlay-xhs';
+                }
+            }
+
+            const toast = document.getElementById('clean-mode-toast');
+            if (toast) {
+                toast.style.display = 'block';
+                toast.textContent = isCleanMode ? '🎬 已开启纯净录制模式 (按 H 键恢复工具栏)' : '🖥️ 已退出纯净模式';
+                setTimeout(() => { toast.style.display = 'none'; }, 2200);
+            }
+        }
+
+        // 一键 60FPS 原生录屏与自动下载
+        function toggleRecording() {
+            const recordBtn = document.getElementById('btn-record');
+            if (mediaRecorder && mediaRecorder.state === 'recording') {
+                mediaRecorder.stop();
+                clearInterval(recordTimerInterval);
+                recordBtn.textContent = '🔴 一键录屏';
+                recordBtn.classList.remove('recording-pulse');
+                updateStatus('⏳ 正在打包高码率 60FPS 视频文件...', '#facc15');
+            } else {
+                try {
+                    const stream = renderer.domElement.captureStream(60);
+                    recordedChunks = [];
+                    let mime = 'video/webm;codecs=vp9';
+                    if (MediaRecorder.isTypeSupported('video/mp4;codecs=avc1')) {
+                        mime = 'video/mp4;codecs=avc1';
+                    } else if (MediaRecorder.isTypeSupported('video/mp4')) {
+                        mime = 'video/mp4';
+                    } else if (MediaRecorder.isTypeSupported('video/webm;codecs=vp9')) {
+                        mime = 'video/webm;codecs=vp9';
+                    } else if (MediaRecorder.isTypeSupported('video/webm')) {
+                        mime = 'video/webm';
+                    }
+
+                    mediaRecorder = new MediaRecorder(stream, {
+                        mimeType: mime,
+                        videoBitsPerSecond: 16000000 // 16Mbps 高清短视频码率
+                    });
+
+                    mediaRecorder.ondataavailable = (e) => {
+                        if (e.data && e.data.size > 0) recordedChunks.push(e.data);
+                    };
+
+                    mediaRecorder.onstop = () => {
+                        const blob = new Blob(recordedChunks, { type: mime });
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.style.display = 'none';
+                        a.href = url;
+                        const ext = mime.includes('mp4') ? 'mp4' : 'webm';
+                        const tag = currentAspectMode.toLowerCase();
+                        a.download = `particle_${tag}_60fps_${Date.now()}.${ext}`;
+                        document.body.appendChild(a);
+                        a.click();
+                        setTimeout(() => {
+                            document.body.removeChild(a);
+                            URL.revokeObjectURL(url);
+                        }, 1000);
+                        updateStatus(`🎉 录制完成！60FPS 原生 ${ext.toUpperCase()} 视频已下载至本地下载目录！`, '#34d399');
+                    };
+
+                    mediaRecorder.start(200);
+                    recordStartTime = Date.now();
+                    recordBtn.classList.add('recording-pulse');
+
+                    recordTimerInterval = setInterval(() => {
+                        const elapsed = Math.floor((Date.now() - recordStartTime) / 1000);
+                        const m = String(Math.floor(elapsed / 60)).padStart(2, '0');
+                        const s = String(elapsed % 60).padStart(2, '0');
+                        recordBtn.textContent = `⏹️ 停止 (${m}:${s})`;
+                    }, 500);
+
+                    updateStatus('🔴 正在录制 60FPS 原生视频！比划手势展示神剑与手枪吧！', '#f43f5e');
+                } catch (err) {
+                    console.error('Recording error:', err);
+                    updateStatus('⚠️ 当前浏览器不支持 Canvas 直录，建议使用录屏软件捕获视口', '#ef4444');
+                }
+            }
+        }
+
+        document.getElementById('btn-record').addEventListener('click', toggleRecording);
+
+                window.addEventListener('resize', () => {
+            if (currentAspectMode !== 'DESKTOP') {
+                applyAspectMode(currentAspectMode);
+            } else {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            }
+        });
+
+        document.getElementById('btn-theme').addEventListener('click', () => {
+            themeIndex = (themeIndex + 1) % THEMES.length;
+            const curTheme = THEMES[themeIndex];
+            initParticlesTheme(curTheme);
+            updateStatus(`🎨 已切换星系风格：${curTheme.name}`, '#f43f5e');
+        });
+
+        document.getElementById('btn-demo-gun').addEventListener('click', () => {
+            if (MOUSE.gesture === GESTURES.GUN) {
+                // 已在手枪形态，点击直接开火！
+                const muzzleWorldPos = weaponOrigin.clone().addScaledVector(weaponDirU, 180).addScaledVector(weaponDirV, 16.5);
+                shootLaserBolt(muzzleWorldPos, weaponDirU);
+            } else {
+                MOUSE.active = true;
+                MOUSE.gesture = GESTURES.GUN;
+                MOUSE.targetPos.set(-20, 80, 0);
+                MOUSE.smoothPos.set(-20, 80, 0);
+                MOUSE.aimDirection.set(0.85, 0.45, 0).normalize();
+                badgeRight.classList.add('active-badge', 'badge-weapon-active');
+                badgeRightText.textContent = '当前手: 🔫 能量手枪 (瞄准/开火)';
+                updateStatus('🔫 能量手枪已激活！再次点击按钮或屏幕任意位置即可开火！', '#f87171');
+            }
+        });
+
+        document.getElementById('btn-demo-sword').addEventListener('click', () => {
+            if (MOUSE.gesture === GESTURES.SWORD) {
+                MOUSE.gesture = GESTURES.IDLE;
+                badgeRight.classList.remove('active-badge', 'badge-weapon-active');
+                badgeRightText.textContent = '手部: 待命';
+                updateStatus('✨ 粒子解体，繁星散落...', '#38bdf8');
+            } else {
+                MOUSE.active = true;
+                MOUSE.gesture = GESTURES.SWORD;
+                MOUSE.targetPos.set(-10, 15, 0);
+                MOUSE.smoothPos.set(-10, 15, 0);
+                MOUSE.aimDirection.set(0.45, 0.89, 0).normalize();
+                badgeRight.classList.add('active-badge', 'badge-weapon-active');
+                badgeRightText.textContent = '当前手: 🗡️ 2指剑诀 (万剑归宗)';
+                updateStatus('🗡️ 2指剑诀已激活！36,000 颗星尘粒子凝聚成剑，移动鼠标挥舞劈砍！', '#facc15');
+            }
+        });
+
+        document.getElementById('btn-demo-shield').addEventListener('click', () => {
+            MOUSE.active = true;
+            MOUSE.gesture = GESTURES.REPULSOR;
+            MOUSE.targetPos.set(0, 0, 0);
+            MOUSE.smoothPos.set(0, 0, 0);
+            updateStatus('🖐️ 掌心时空斥力盾演示中...', '#34d399');
+            setTimeout(() => { MOUSE.gesture = GESTURES.IDLE; }, 2500);
+        });
+
+        document.getElementById('btn-demo-clap').addEventListener('click', () => {
+            triggerClapShockwave(new THREE.Vector3(0, 0, 0));
+        });
+
+        document.getElementById('btn-burst').addEventListener('click', () => {
+            triggerSupernova(HANDS[0].active ? HANDS[0].smoothPos : (HANDS[1].active ? HANDS[1].smoothPos : new THREE.Vector3()));
+        });
+
+        let showPip = true;
+        document.getElementById('btn-pip').addEventListener('click', () => {
+            showPip = !showPip;
+            document.getElementById('camera-pip-box').style.display = showPip ? 'block' : 'none';
+        });
+
+        window.PARTICLE_COUNT = PARTICLE_COUNT;
+        window.HANDS = HANDS;
+        window.MOUSE = MOUSE;
+        window.THEMES = THEMES;
+        window.GESTURES = GESTURES;
+        window.shootLaserBolt = shootLaserBolt;
+        window.triggerSupernova = triggerSupernova;
+        window.triggerClapShockwave = triggerClapShockwave;
+        window.detectHandPose = detectHandPose;
+        window.setMockGesture = (active) => { mockGestureActive = active; };
+    </script>
+</body>
+</html>
