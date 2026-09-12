@@ -531,28 +531,80 @@
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
         }
 
+        /* 顶部右上角多语言切换胶囊 */
+        #lang-switcher {
+            position: absolute;
+            top: 18px;
+            right: 24px;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+        }
+
+        .lang-pill {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            background: rgba(13, 17, 28, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(56, 189, 248, 0.35);
+            color: #f1f5f9;
+            font-size: 12.5px;
+            font-weight: 600;
+            letter-spacing: 0.4px;
+            padding: 7px 15px;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), inset 0 0 10px rgba(56, 189, 248, 0.15);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .lang-pill:hover {
+            border-color: #38bdf8;
+            background: rgba(30, 41, 59, 0.95);
+            transform: scale(1.05);
+            box-shadow: 0 0 16px rgba(56, 189, 248, 0.4);
+        }
+
+        .lang-pill:active {
+            transform: scale(0.96);
+        }
+
+        .lang-icon {
+            font-size: 14px;
+        }
+
     </style>
 </head>
 <body>
 
+    <!-- 顶部右上角多语言切换胶囊 -->
+    <div id="lang-switcher">
+        <button id="btn-lang" class="lang-pill" title="切换语言 (中文 / English / 한국어，按快捷键 L 亦可切换)">
+            <span class="lang-icon">🌐</span>
+            <span id="lang-current-label">中文</span>
+        </button>
+    </div>
+
     <div id="loader">
         <div class="spinner"></div>
-        <div class="loading-title">正在启动宇宙武器粒子引擎...</div>
-        <div class="loading-desc">已载入神剑与粒子手枪拓扑模型，请授权摄像头</div>
+        <div class="loading-title" id="loading-title">正在启动宇宙武器粒子引擎...</div>
+        <div class="loading-desc" id="loading-desc">已载入神剑与粒子手枪拓扑模型，请授权摄像头</div>
     </div>
 
     <div id="canvas-container"></div>
 
     <!-- 移动端安全区辅助网格 -->
     <div id="mobile-safe-overlay">
-        <div class="safe-watermark-tag">🛡️ 短视频安全防遮挡区</div>
+        <div class="safe-watermark-tag" id="safe-tag-text">🛡️ 短视频安全防遮挡区</div>
         <div class="safe-side-icons">
-            <div class="mock-icon" title="抖音头像遮挡区">头像</div>
+            <div class="mock-icon" id="mock-avatar" title="抖音头像遮挡区">头像</div>
             <div class="mock-icon" title="点赞遮挡区">❤️</div>
             <div class="mock-icon" title="评论遮挡区">💬</div>
             <div class="mock-icon" title="分享遮挡区">↗️</div>
         </div>
-        <div class="safe-bottom-text">
+        <div class="safe-bottom-text" id="safe-bottom-text">
             ⚠️ 手机短视频底部字幕与话题遮挡区 (已自动为神剑/手枪腾出上方黄金视区)
         </div>
     </div>
@@ -579,7 +631,7 @@
             <span id="badge-right-text">手部 2: 等待感应</span>
         </div>
         <div id="badge-clap" class="gesture-badge" style="display:none; background:rgba(234,179,8,0.25); border-color:#eab308; color:#fef08a;">
-            <span>👏 击掌时空激波</span>
+            <span id="badge-clap-text">👏 击掌时空激波</span>
         </div>
     </div>
 
@@ -590,13 +642,13 @@
 
     <!-- 画中画 -->
     <div id="camera-pip-box" title="双击视窗或点击按钮放大/还原画中画">
-        <div class="pip-badge">👐 AI 视觉感知监控</div>
+        <div class="pip-badge" id="pip-badge-text">👐 AI 视觉感知监控</div>
         <button id="btn-pip-size" class="pip-toggle-btn" title="切换画中画尺寸 (大 / 默认)">⤢ 放大</button>
         <canvas id="pip-canvas"></canvas>
         <div class="pip-legend">
-            <span style="color:#22d3ee">● 手部 1</span>
-            <span style="color:#f43f5e">● 手部 2</span>
-            <span style="color:#94a3b8; font-size: 10px;">(双击放大/还原)</span>
+            <span id="pip-legend-1" style="color:#22d3ee">● 手部 1</span>
+            <span id="pip-legend-2" style="color:#f43f5e">● 手部 2</span>
+            <span id="pip-legend-hint" style="color:#94a3b8; font-size: 10px;">(双击放大/还原)</span>
         </div>
     </div>
 
@@ -617,6 +669,282 @@
     <video id="input-video" playsinline></video>
 
     <script>
+        // ==========================================
+        // 0. 多语言国际化 (i18n): 中文 / English / 한국어
+        // ==========================================
+        const I18N = {
+            zh: {
+                code: 'zh',
+                name: '中文',
+                nextLang: 'en',
+                title: '双手交互星空粒子 - 粒子神剑与能量手枪全能版',
+                loadingTitle: '正在启动宇宙武器粒子引擎...',
+                loadingDesc: '已载入神剑与粒子手枪拓扑模型，请授权摄像头',
+                hudReady: '双手 AI 视觉感应就绪...',
+                hudStandbyL: '手部 1: 等待感应',
+                hudStandbyR: '手部 2: 等待感应',
+                handWait: '手部: 待命',
+                handLeft: '左侧手',
+                handRight: '右侧手',
+                handCurrent: '当前手',
+                particles: '粒子',
+                clapShockwave: '👏 击掌时空激波',
+                hintOverlay: '🔫 <span class="gun-color">拇指+食指(手枪手势)</span>：<b>粒子能量手枪(扣扳机开火)</b> ｜ 🗡️ <span class="sword-color">食指+中指(剑诀)</span>：<b>万剑归宗神剑</b> ｜ 🖐️ <b>张手掌</b>(斥力盾)',
+                pipTitle: '👐 AI 视觉感知监控',
+                pipExpand: '⤢ 放大',
+                pipCollapse: '⤡ 还原',
+                pipLegend1: '● 手部 1',
+                pipLegend2: '● 手部 2',
+                pipLegendHint: '(双击放大/还原)',
+                btnTheme: '🎨 切换星系色彩',
+                btnGun: '🔫 能量手枪 (点击开火)',
+                btnSword: '🗡️ 两指剑诀 (万剑归宗)',
+                btnShield: '🖐️ 时空斥力盾',
+                btnClap: '👏 击掌激波',
+                btnBurst: '💥 超新星',
+                btnPip: '📷 画中画',
+                aspectDouyin: '📱 9:16 抖音',
+                aspectXiaohongshu: '📕 3:4 小红书',
+                aspectDesktop: '🖥️ 全屏桌面',
+                btnRecord: '🔴 一键录屏',
+                btnRecordStop: '⏹️ 停止录制',
+                btnSafeZone: '🛡️ 安全区',
+                cleanModeToastOn: '🎬 已开启纯净录制模式 (按 H 键恢复工具栏)',
+                cleanModeToastOff: '🖥️ 已退出纯净模式',
+                safeWatermark: '🛡️ 短视频安全防遮挡区',
+                mockAvatar: '头像',
+                safeBottomText: '⚠️ 手机短视频底部字幕与话题遮挡区 (已自动为神剑/手枪腾出上方黄金视区)',
+                gestures: {
+                    PINCH: '🤏 引力黑洞',
+                    POINTER: '👉 单指画星轨',
+                    SWORD: '🗡️ 2指剑诀(神剑)',
+                    GUN: '🔫 能量手枪(瞄准)',
+                    REPULSOR: '🖐️ 掌心斥力盾',
+                    FIST: '✊ 凝聚蓄力',
+                    IDLE: '✋ 自然巡航'
+                },
+                statusGunReady: '🔫 能量手枪已激活！再次点击按钮或屏幕任意位置即可开火！',
+                statusSwordReady: '🗡️ 2指剑诀已激活！36,000 颗星尘粒子凝聚成神剑！',
+                statusSwordIdle: '✨ 粒子解体，繁星散落...',
+                statusShieldReady: '🖐️ 掌心时空斥力盾已激活！',
+                statusClapReady: '👏 击掌时空激波已引爆！环形能量震荡全屏！',
+                statusSupernova: '💥 超新星爆发！能量释放星尘全屏飞溅...',
+                statusLangSwitched: '🌐 已切换语言：中文'
+            },
+            en: {
+                code: 'en',
+                name: 'English',
+                nextLang: 'ko',
+                title: 'Gesture Particle Universe - Blaster & Dual-Blade Edition',
+                loadingTitle: 'Initializing Cosmic Weapon Particle Engine...',
+                loadingDesc: 'Loaded energy cannon & dual-blade topology. Please allow camera.',
+                hudReady: 'Dual-hand AI vision sensor ready...',
+                hudStandbyL: 'Hand 1: Standby',
+                hudStandbyR: 'Hand 2: Standby',
+                handWait: 'Hand: Standby',
+                handLeft: 'Left Hand',
+                handRight: 'Right Hand',
+                handCurrent: 'Active Hand',
+                particles: 'particles',
+                clapShockwave: '👏 Cosmic Clap Wave',
+                hintOverlay: '🔫 <span class="gun-color">Thumb+Index (Finger Gun)</span>: <b>Plasma Blaster (Fire)</b> ｜ 🗡️ <span class="sword-color">Index+Middle (Sword Dance)</span>: <b>Dual-Blade Cannon</b> ｜ 🖐️ <b>Open Palm</b> (Repulsor)',
+                pipTitle: '👐 AI Vision Sensor',
+                pipExpand: '⤢ Expand',
+                pipCollapse: '⤡ Reset',
+                pipLegend1: '● Hand 1',
+                pipLegend2: '● Hand 2',
+                pipLegendHint: '(Double-click to toggle size)',
+                btnTheme: '🎨 Galaxy Themes',
+                btnGun: '🔫 Plasma Blaster (Fire)',
+                btnSword: '🗡️ Dual-Blade (Sword Dance)',
+                btnShield: '🖐️ Repulsor Shield',
+                btnClap: '👏 Cosmic Clap',
+                btnBurst: '💥 Supernova',
+                btnPip: '📷 Camera PIP',
+                aspectDouyin: '📱 9:16 Portrait',
+                aspectXiaohongshu: '📕 3:4 Social',
+                aspectDesktop: '🖥️ Fullscreen',
+                btnRecord: '🔴 Record Video',
+                btnRecordStop: '⏹️ Stop & Save',
+                btnSafeZone: '🛡️ Safe Zone',
+                cleanModeToastOn: '🎬 Clean recording mode active (Press H key to restore controls)',
+                cleanModeToastOff: '🖥️ Exited clean mode',
+                safeWatermark: '🛡️ Short Video Safe Zone',
+                mockAvatar: 'Profile',
+                safeBottomText: '⚠️ Mobile UI overlay zone (Weapons elevated to golden visual focus)',
+                gestures: {
+                    PINCH: '🤏 Gravity Hole',
+                    POINTER: '👉 Cosmic Beam',
+                    SWORD: '🗡️ Dual-Blade',
+                    GUN: '🔫 Plasma Cannon',
+                    REPULSOR: '🖐️ Repulsor Shield',
+                    FIST: '✊ Energy Charge',
+                    IDLE: '✋ Free Roam'
+                },
+                statusGunReady: '🔫 Plasma Blaster active! Click anywhere to unleash laser fire!',
+                statusSwordReady: '🗡️ Dual-Blade active! 36,000 cosmic particles forged into blade!',
+                statusSwordIdle: '✨ Plasma dissipated into cosmic dust...',
+                statusShieldReady: '🖐️ Repulsor shield activated! Repelling stellar particles!',
+                statusClapReady: '👏 Cosmic clap shockwave unleashed! Ring ripples pulsing across cosmos!',
+                statusSupernova: '💥 Supernova burst! Cosmic dust scattering into infinity...',
+                statusLangSwitched: '🌐 Language switched: English'
+            },
+            ko: {
+                code: 'ko',
+                name: '한국어',
+                nextLang: 'zh',
+                title: '양손 제스처 우주 입자 - 플라즈마 블래스터 & 비검결 전능판',
+                loadingTitle: '우주 무기 입자 엔진 시동 중...',
+                loadingDesc: '플라즈마 블래스터 및 비검결 토폴로지 로드 완료. 카메라 접근을 허용해주세요.',
+                hudReady: '양손 AI 비전 센서 감지 준비 완료...',
+                hudStandbyL: '손 1: 대기 중',
+                hudStandbyR: '손 2: 대기 중',
+                handWait: '손: 대기 중',
+                handLeft: '왼손',
+                handRight: '오른손',
+                handCurrent: '현재 손',
+                particles: '입자',
+                clapShockwave: '👏 박수 시공간 충격파',
+                hintOverlay: '🔫 <span class="gun-color">엄지+검지 (권총 제스처)</span>: <b>플라즈마 블래스터 (방아쇠 발사)</b> ｜ 🗡️ <span class="sword-color">검지+중지 (비검결)</span>: <b>만검귀종 플라즈마 검</b> ｜ 🖐️ <b>손바닥</b> (척력 방패)',
+                pipTitle: '👐 AI 비전 센서 모니터링',
+                pipExpand: '⤢ 확대',
+                pipCollapse: '⤡ 복원',
+                pipLegend1: '● 손 1',
+                pipLegend2: '● 손 2',
+                pipLegendHint: '(더블클릭 크기 전환)',
+                btnTheme: '🎨 은하 색상 전환',
+                btnGun: '🔫 플라즈마 블래스터 (발사)',
+                btnSword: '🗡️ 비검결 (만검귀종)',
+                btnShield: '🖐️ 반중력 척력 방패',
+                btnClap: '👏 박수 충격파',
+                btnBurst: '💥 초신성 폭발',
+                btnPip: '📷 PIP 화면',
+                aspectDouyin: '📱 9:16 세로 모드',
+                aspectXiaohongshu: '📕 3:4 포트레이트',
+                aspectDesktop: '🖥️ 전체 화면',
+                btnRecord: '🔴 원클릭 녹화',
+                btnRecordStop: '⏹️ 녹화 중지',
+                btnSafeZone: '🛡️ 안전 구역',
+                cleanModeToastOn: '🎬 클린 녹화 모드 켜짐 (키보드 H 키를 눌러 복원)',
+                cleanModeToastOff: '🖥️ 클린 모드 종료',
+                safeWatermark: '🛡️ 숏폼 비디오 안전 구역',
+                mockAvatar: '프로필',
+                safeBottomText: '⚠️ 모바일 UI 가림 구역 (상단 골든 뷰 영역으로 자동 배치)',
+                gestures: {
+                    PINCH: '🤏 중력 블랙홀',
+                    POINTER: '👉 성운 광선',
+                    SWORD: '🗡️ 비검결(신검)',
+                    GUN: '🔫 플라즈마포',
+                    REPULSOR: '🖐️ 척력 방패',
+                    FIST: '✊ 기 충전',
+                    IDLE: '✋ 자유 비행'
+                },
+                statusGunReady: '🔫 플라즈마 블래스터 활성화! 화면을 클릭하여 레이저 탄환을 발사하세요!',
+                statusSwordReady: '🗡️ 비검결 활성화! 36,000개의 성운 입자가 검으로 응집되었습니다!',
+                statusSwordIdle: '✨ 입자가 해체되며 별빛으로 흩어집니다...',
+                statusShieldReady: '🖐️ 반중력 척력 방패 활성화!',
+                statusClapReady: '👏 박수 시공간 충격파 폭발! 링 형태의 에너지가 화면 전체로 전파됩니다!',
+                statusSupernova: '💥 초신성 대폭발! 성운 에너지가 전방위로 방출됩니다...',
+                statusLangSwitched: '🌐 언어 변경 완료: 한국어'
+            }
+        };
+
+        let currentLang = 'zh';
+        const gestureLabels = {};
+
+        function applyLanguage(lang) {
+            if (!I18N[lang]) lang = 'zh';
+            currentLang = lang;
+            const dict = I18N[lang];
+            document.documentElement.lang = lang === 'zh' ? 'zh-CN' : (lang === 'ko' ? 'ko-KR' : 'en');
+            document.title = dict.title;
+
+            const langLabel = document.getElementById('lang-current-label');
+            if (langLabel) langLabel.textContent = dict.name;
+
+            // 同步手势名称映射
+            for (const [k, v] of Object.entries(dict.gestures)) {
+                gestureLabels[k] = v;
+            }
+
+            // 更新静态 DOM 文本
+            const elMap = {
+                'loading-title': dict.loadingTitle,
+                'loading-desc': dict.loadingDesc,
+                'hint-overlay': dict.hintOverlay,
+                'pip-badge-text': dict.pipTitle,
+                'pip-legend-1': dict.pipLegend1,
+                'pip-legend-2': dict.pipLegend2,
+                'pip-legend-hint': dict.pipLegendHint,
+                'btn-theme': dict.btnTheme,
+                'btn-demo-gun': dict.btnGun,
+                'btn-demo-sword': dict.btnSword,
+                'btn-demo-shield': dict.btnShield,
+                'btn-demo-clap': dict.btnClap,
+                'btn-burst': dict.btnBurst,
+                'btn-pip': dict.btnPip,
+                'btn-safe-zone': dict.btnSafeZone,
+                'safe-tag-text': dict.safeWatermark,
+                'mock-avatar': dict.mockAvatar,
+                'safe-bottom-text': dict.safeBottomText,
+                'badge-clap-text': dict.clapShockwave
+            };
+
+            for (const [id, val] of Object.entries(elMap)) {
+                const el = document.getElementById(id);
+                if (el) {
+                    if (val.includes('<')) el.innerHTML = val;
+                    else el.textContent = val;
+                }
+            }
+
+            // 画中画按钮
+            const pipSizeBtn = document.getElementById('btn-pip-size');
+            if (pipSizeBtn) {
+                const isExp = document.getElementById('camera-pip-box')?.classList.contains('pip-expanded');
+                pipSizeBtn.textContent = isExp ? dict.pipCollapse : dict.pipExpand;
+            }
+
+            // 画幅按钮
+            const aspectBtn = document.getElementById('btn-aspect');
+            if (aspectBtn && typeof currentAspectMode !== 'undefined') {
+                if (currentAspectMode === 'DOUYIN') aspectBtn.textContent = dict.aspectDouyin;
+                else if (currentAspectMode === 'XIAOHONGSHU') aspectBtn.textContent = dict.aspectXiaohongshu;
+                else aspectBtn.textContent = dict.aspectDesktop;
+            }
+
+            // 录制按钮
+            const recordBtn = document.getElementById('btn-record');
+            if (recordBtn && (!window.mediaRecorder || window.mediaRecorder.state !== 'recording')) {
+                recordBtn.textContent = dict.btnRecord;
+            }
+
+            // 待机与手势徽章多语言全面联动
+            if (typeof HANDS !== 'undefined') {
+                const badgeL = document.getElementById('badge-left-text');
+                const badgeR = document.getElementById('badge-right-text');
+                if (!HANDS[0].active) {
+                    if (badgeL) badgeL.textContent = dict.hudStandbyL;
+                }
+                if (!HANDS[1].active && (!MOUSE || !MOUSE.active || MOUSE.gesture === GESTURES.IDLE)) {
+                    if (badgeR) badgeR.textContent = dict.hudStandbyR;
+                } else if (MOUSE && MOUSE.active && MOUSE.gesture !== GESTURES.IDLE) {
+                    if (badgeR) badgeR.textContent = `${dict.handCurrent}: ${gestureLabels[MOUSE.gesture] || ''}`;
+                }
+                if (!HANDS[0].active && !HANDS[1].active && (!MOUSE || !MOUSE.active || MOUSE.gesture === GESTURES.IDLE)) {
+                    updateStatus(dict.hudReady, '#38bdf8');
+                }
+            }
+
+            localStorage.setItem('gesture_particles_lang', lang);
+        }
+
+        function cycleLanguage() {
+            const next = I18N[currentLang]?.nextLang || 'zh';
+            applyLanguage(next);
+            updateStatus(I18N[currentLang].statusLangSwitched, '#38bdf8');
+        }
+
         // ==========================================
         // 1. 全局配置：36,000 颗高精粒子 & 双手状态
         // ==========================================
@@ -1243,7 +1571,7 @@
             frameCount++;
             if (now - fpsTimer >= 500) {
                 const fps = Math.round((frameCount * 1000) / (now - fpsTimer));
-                fpsEl.textContent = `${fps} FPS (${(PARTICLE_COUNT / 1000).toFixed(0)}k 粒子)`;
+                fpsEl.textContent = `${fps} FPS (${(PARTICLE_COUNT / 1000).toFixed(0)}k ${I18N[currentLang]?.particles || 'particles'})`;
                 frameCount = 0;
                 fpsTimer = now;
             }
@@ -1744,15 +2072,7 @@
             return GESTURES.IDLE;
         }
 
-        const gestureLabels = {
-            [GESTURES.PINCH]: '🤏 引力黑洞',
-            [GESTURES.POINTER]: '👉 单指画星轨',
-            [GESTURES.SWORD]: '🗡️ 2指剑诀(神剑)',
-            [GESTURES.GUN]: '🔫 能量手枪(瞄准)',
-            [GESTURES.REPULSOR]: '🖐️ 掌心斥力盾',
-            [GESTURES.FIST]: '✊ 凝聚蓄力',
-            [GESTURES.IDLE]: '✋ 自然巡航'
-        };
+        // gestureLabels 已在 I18N 体系中统一维护与动态多语言同步
 
         function onHandResults(results) {
             hideLoader();
@@ -1778,18 +2098,18 @@
             if (numHands === 0) {
                 if (MOUSE.active && MOUSE.gesture !== GESTURES.IDLE) {
                     badgeLeft.classList.add('active-badge');
-                    badgeLeftText.textContent = `模拟: ${gestureLabels[MOUSE.gesture] || ''}`;
+                    badgeLeftText.textContent = `${I18N[currentLang]?.handCurrent || '当前手'}: ${gestureLabels[MOUSE.gesture] || ''}`;
                     badgeRight.classList.remove('active-badge');
-                    badgeRightText.textContent = '手部: 待命';
+                    badgeRightText.textContent = I18N[currentLang]?.handWait || '手部: 待命';
                 } else {
                     HANDS[0].active = false;
                     HANDS[1].active = false;
-                    badgeLeftText.textContent = '手部 1: 等待感应';
-                    badgeRightText.textContent = '手部 2: 等待感应';
+                    badgeLeftText.textContent = I18N[currentLang]?.hudStandbyL || '手部 1: 等待感应';
+                    badgeRightText.textContent = I18N[currentLang]?.hudStandbyR || '手部 2: 等待感应';
                     badgeLeft.classList.remove('active-badge', 'badge-weapon-active');
                     badgeRight.classList.remove('active-badge', 'badge-weapon-active');
                     if (!MOUSE.active) {
-                        updateStatus('🔍 请将手置于摄像头前：拇指+食指变手枪，食指+中指化神剑...', '#94a3b8');
+                        updateStatus(I18N[currentLang]?.hudReady || '🔍 AI 感应就绪...', '#94a3b8');
                     }
                 }
                 return;
@@ -1861,7 +2181,8 @@
                 const h = HANDS[i];
                 const badgeEl = (i === 0) ? badgeLeft : badgeRight;
                 const textEl = (i === 0) ? badgeLeftText : badgeRightText;
-                const handName = (numHands === 1) ? '当前手' : (i === 0 ? '左侧手' : '右侧手');
+                const dict = I18N[currentLang] || I18N.zh;
+                const handName = (numHands === 1) ? dict.handCurrent : (i === 0 ? dict.handLeft : dict.handRight);
 
                 if (i < parsed.length) {
                     const data = parsed[i];
@@ -1961,7 +2282,7 @@
                     h.active = false;
                     h.gesture = GESTURES.IDLE;
                     badgeEl.classList.remove('active-badge', 'badge-weapon-active');
-                    textEl.textContent = `${handName}: 待命`;
+                    textEl.textContent = `${handName}: ${dict.handWait}`;
                 }
             }
 
@@ -2124,6 +2445,8 @@
                 updateStatus('🤏 键盘[3]模拟：引力黑洞吸附开启', '#38bdf8');
             } else if (e.key === '4') {
                 triggerClapShockwave(new THREE.Vector3(0, 0, 0));
+            } else if (e.key === 'l' || e.key === 'L') {
+                cycleLanguage();
             }
         });
 
@@ -2189,34 +2512,34 @@
                 targetW = Math.min(window.innerWidth, Math.round(window.innerHeight * (9 / 16)));
                 targetH = window.innerHeight;
                 cameraZ = 540; // 适当拉远，让 275px 巨型手炮与神剑在竖屏中气势磅礴地完整展现
-                aspectBtn.textContent = '📱 抖音 9:16';
+                aspectBtn.textContent = I18N[currentLang]?.aspectDouyin || '📱 9:16 抖音';
                 safeZoneBtn.style.display = 'flex';
                 pipBox.classList.add('pip-mobile-layout');
                 container.classList.add('container-framed');
                 safeOverlay.className = showSafeOverlay ? 'safe-overlay-douyin' : '';
-                updateStatus('📱 已切换至【抖音 9:16 沉浸竖屏】，画中画已居中置底呈现！', '#38bdf8');
+                updateStatus(I18N[currentLang]?.aspectDouyin ? `${I18N[currentLang].aspectDouyin}` : '📱 9:16', '#38bdf8');
             } else if (mode === 'XIAOHONGSHU') {
                 // 📕 3:4 小红书黄金比例
                 targetW = Math.min(window.innerWidth, Math.round(window.innerHeight * (3 / 4)));
                 targetH = window.innerHeight;
                 cameraZ = 490;
-                aspectBtn.textContent = '📕 小红书 3:4';
+                aspectBtn.textContent = I18N[currentLang]?.aspectXiaohongshu || '📕 3:4 小红书';
                 safeZoneBtn.style.display = 'flex';
                 pipBox.classList.add('pip-mobile-layout');
                 container.classList.add('container-framed');
                 safeOverlay.className = showSafeOverlay ? 'safe-overlay-xhs' : '';
-                updateStatus('📕 已切换至【小红书 3:4 黄金画幅】，画中画已居中置底呈现！', '#f43f5e');
+                updateStatus(I18N[currentLang]?.aspectXiaohongshu ? `${I18N[currentLang].aspectXiaohongshu}` : '📕 3:4', '#f43f5e');
             } else {
                 // 🖥️ 全屏桌面
                 targetW = window.innerWidth;
                 targetH = window.innerHeight;
                 cameraZ = 420;
-                aspectBtn.textContent = '🖥️ 全屏桌面';
+                aspectBtn.textContent = I18N[currentLang]?.aspectDesktop || '🖥️ 全屏桌面';
                 safeZoneBtn.style.display = 'none';
                 pipBox.classList.remove('pip-mobile-layout');
                 container.classList.remove('container-framed');
                 safeOverlay.className = '';
-                updateStatus('🖥️ 已切换至【全屏桌面模式】', '#38bdf8');
+                updateStatus(I18N[currentLang]?.aspectDesktop ? `${I18N[currentLang].aspectDesktop}` : '🖥️ Fullscreen', '#38bdf8');
             }
 
             container.style.width = targetW + 'px';
@@ -2253,7 +2576,7 @@
         function toggleCleanMode() {
             isCleanMode = !isCleanMode;
             document.body.classList.toggle('clean-mode-active', isCleanMode);
-            const uiIds = ['bottom-controls', 'hint-overlay', 'btn-pip-size', 'hud-top', 'gesture-badges', 'mobile-safe-overlay'];
+            const uiIds = ['bottom-controls', 'hint-overlay', 'btn-pip-size', 'hud-top', 'gesture-badges', 'mobile-safe-overlay', 'lang-switcher'];
             uiIds.forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.style.display = isCleanMode ? 'none' : '';
@@ -2272,7 +2595,7 @@
             const toast = document.getElementById('clean-mode-toast');
             if (toast) {
                 toast.style.display = 'block';
-                toast.textContent = isCleanMode ? '🎬 已开启纯净录制模式 (按 H 键恢复工具栏)' : '🖥️ 已退出纯净模式';
+                toast.textContent = isCleanMode ? (I18N[currentLang]?.cleanModeToastOn || '🎬 已开启纯净录制模式 (按 H 键恢复工具栏)') : (I18N[currentLang]?.cleanModeToastOff || '🖥️ 已退出纯净模式');
                 setTimeout(() => { toast.style.display = 'none'; }, 2200);
             }
         }
@@ -2283,7 +2606,7 @@
             if (mediaRecorder && mediaRecorder.state === 'recording') {
                 mediaRecorder.stop();
                 clearInterval(recordTimerInterval);
-                recordBtn.textContent = '🔴 一键录屏';
+                recordBtn.textContent = I18N[currentLang]?.btnRecord || '🔴 一键录屏';
                 recordBtn.classList.remove('recording-pulse');
                 updateStatus('⏳ 正在打包高码率 60FPS 视频文件...', '#facc15');
             } else {
@@ -2325,7 +2648,7 @@
                             document.body.removeChild(a);
                             URL.revokeObjectURL(url);
                         }, 1000);
-                        updateStatus(`🎉 录制完成！60FPS 原生 ${ext.toUpperCase()} 视频已下载至本地下载目录！`, '#34d399');
+                        updateStatus(I18N[currentLang]?.statusRecorded || `🎉 录制完成！60FPS 原生 ${ext.toUpperCase()} 视频已下载至本地！`, '#34d399');
                     };
 
                     mediaRecorder.start(200);
@@ -2336,10 +2659,10 @@
                         const elapsed = Math.floor((Date.now() - recordStartTime) / 1000);
                         const m = String(Math.floor(elapsed / 60)).padStart(2, '0');
                         const s = String(elapsed % 60).padStart(2, '0');
-                        recordBtn.textContent = `⏹️ 停止 (${m}:${s})`;
+                        recordBtn.textContent = `${I18N[currentLang]?.btnRecordStop || '⏹️ 停止'} (${m}:${s})`;
                     }, 500);
 
-                    updateStatus('🔴 正在录制 60FPS 原生视频！比划手势展示神剑与手枪吧！', '#f43f5e');
+                    updateStatus(I18N[currentLang]?.statusRecording || '🔴 正在录制 60FPS 原生视频！比划手势展示神剑与手枪吧！', '#f43f5e');
                 } catch (err) {
                     console.error('Recording error:', err);
                     updateStatus('⚠️ 当前浏览器不支持 Canvas 直录，建议使用录屏软件捕获视口', '#ef4444');
@@ -2378,8 +2701,8 @@
                 MOUSE.smoothPos.set(-20, 80, 0);
                 MOUSE.aimDirection.set(0.85, 0.45, 0).normalize();
                 badgeRight.classList.add('active-badge', 'badge-weapon-active');
-                badgeRightText.textContent = '当前手: 🔫 能量手枪 (瞄准/开火)';
-                updateStatus('🔫 能量手枪已激活！再次点击按钮或屏幕任意位置即可开火！', '#f87171');
+                badgeRightText.textContent = `${I18N[currentLang]?.handCurrent || '当前手'}: ${I18N[currentLang]?.gestures?.GUN || '🔫 能量手枪'}`;
+                updateStatus(I18N[currentLang]?.statusGunReady || '🔫 能量手枪已激活！再次点击开火！', '#f87171');
             }
         });
 
@@ -2387,8 +2710,8 @@
             if (MOUSE.gesture === GESTURES.SWORD) {
                 MOUSE.gesture = GESTURES.IDLE;
                 badgeRight.classList.remove('active-badge', 'badge-weapon-active');
-                badgeRightText.textContent = '手部: 待命';
-                updateStatus('✨ 粒子解体，繁星散落...', '#38bdf8');
+                badgeRightText.textContent = I18N[currentLang]?.handWait || '手部: 待命';
+                updateStatus(I18N[currentLang]?.statusSwordIdle || '✨ 粒子解体，繁星散落...', '#38bdf8');
             } else {
                 MOUSE.active = true;
                 MOUSE.gesture = GESTURES.SWORD;
@@ -2396,8 +2719,8 @@
                 MOUSE.smoothPos.set(-10, 15, 0);
                 MOUSE.aimDirection.set(0.45, 0.89, 0).normalize();
                 badgeRight.classList.add('active-badge', 'badge-weapon-active');
-                badgeRightText.textContent = '当前手: 🗡️ 2指剑诀 (万剑归宗)';
-                updateStatus('🗡️ 2指剑诀已激活！36,000 颗星尘粒子凝聚成剑，移动鼠标挥舞劈砍！', '#facc15');
+                badgeRightText.textContent = `${I18N[currentLang]?.handCurrent || '当前手'}: ${I18N[currentLang]?.gestures?.SWORD || '🗡️ 2指剑诀'}`;
+                updateStatus(I18N[currentLang]?.statusSwordReady || '🗡️ 2指剑诀已激活！', '#facc15');
             }
         });
 
@@ -2424,6 +2747,27 @@
             document.getElementById('camera-pip-box').style.display = showPip ? 'block' : 'none';
         });
 
+        // 语言切换按钮绑定
+        const langBtn = document.getElementById('btn-lang');
+        if (langBtn) {
+            langBtn.addEventListener('click', () => {
+                cycleLanguage();
+            });
+        }
+
+        // 初始化多语言 (优先读取用户偏好，其次根据系统语言)
+        let initialLang = localStorage.getItem('gesture_particles_lang');
+        if (!initialLang) {
+            const navLang = (navigator.language || navigator.userLanguage || '').toLowerCase();
+            if (navLang.startsWith('ko')) initialLang = 'ko';
+            else if (navLang.startsWith('zh')) initialLang = 'zh';
+            else initialLang = 'en';
+        }
+        applyLanguage(initialLang);
+
+        window.applyLanguage = applyLanguage;
+        window.cycleLanguage = cycleLanguage;
+        window.I18N = I18N;
         window.PARTICLE_COUNT = PARTICLE_COUNT;
         window.HANDS = HANDS;
         window.MOUSE = MOUSE;
