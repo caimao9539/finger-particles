@@ -11,11 +11,17 @@
 #### 🌟 核心特色与七大多态形态
 - **160,000 颗高精星尘粒子与 3D 刚体拓扑（粒子数量激增至 16 万）**：
   1. 💃 **漫威战甲·裴艺珍 (Marvel Armor Pei Yizhen)**：全场 **160,000 颗星尘粒子 1:1 像素级极致写实还原**东方神颜漫威机甲超模！
-     - **1:1 原画像素级拓扑与真实色彩**：基于全身高清参考图，利用 AI 抠图与解剖学 3D 深度曲面方程提取 160,000 颗高精粒子，搭载 4.00 MB 二进制流模型（`peiyizhen_model.bin`）毫秒级加载；
+     - **🎬 2.8 秒电影级四阶段解剖学生长变身系统**：告别单调收缩，如好莱坞大片般充满层次感与高潮看点：
+       - `⚡ [1/4] 能量奇点`：胸口倒三角方舟反应堆等离子引力场率先引爆；
+       - `👢 [2/4] 足踏虚空`：白金尖头战靴与超模美腿纳米逆流结晶拔地而起；
+       - `🛡️ [3/4] 战甲覆体`：深蓝金属胸甲与陶瓷机甲层叠闭合锁死；
+       - `✨ [4/4] 神颜破茧`：东方神颜与如瀑黑发破茧定格，随后开启优雅慢速 360° 宇宙环绕自转！
+     - **🌌 引力双螺旋与量子淬火显影**：未就位粒子围绕人体中轴线做切向对数星云飞旋盘旋，炽热高光在就位瞬间迅速淬火冷却析出 1:1 原画真实色彩！
+     - **1:1 原画像素级拓扑与真实色彩**：基于全身高清参考图，搭载 4.00 MB 二进制流模型（`peiyizhen_model.bin`）毫秒级加载；
      - **绝美神颜与战衣细节**：东方神颜精致面容与红润唇珠、侧分飘逸黑发随微风轻拂、深蓝金属胸甲与白金陶瓷纳米机甲护甲、黄金细线精工勾勒；
      - **胸口发光方舟反应堆与手腕等离子微光**：胸口倒三角方舟反应堆与手腕电弧附带独立高频脉冲呼吸算法，绽放耀眼苍蓝极光！
-     - **逆天修长机甲双腿与机械高跟战靴**：修长分立的纳米战甲美腿呈现超模微交叉走秀步态，足蹬白金机械尖头高跟战靴，在太空中优雅自转；
-     - **唤醒方式**：在摄像头前比出 **👌 优雅兰花仙手 / 极光 OK 手势**（或 ✌️ 拍照比耶），亦可点击底部「💃 漫威战甲·裴艺珍」按钮或按键盘「**7**」/「**B**」。
+     - **逆天修长机甲双腿与机械高跟战靴**：修长分立的纳米战甲美腿呈现超模微交叉走秀步态，足蹬白金机械尖头高跟战靴；
+     - **唤醒方式**：在摄像头前比出 **👌 优雅兰花仙手 / 极光 OK 手势**（or ✌️ 拍照比耶），亦可点击底部「💃 漫威战甲·裴艺珍」按钮或按键盘「**7**」/「**B**」。
   2. 🔫 **粒子能量手枪 (Plasma Cannon)**：**拇指+食指比出手枪手势**，160,000 颗粒子聚拢拓扑重构为一把科幻手枪！
      - **瞄准追踪**：随手腕与食指方向实时 3D 旋转瞄准；
      - **扣扳机开火**：拇指自然下压扣动扳机（或点击鼠标/按空格键），枪口喷射耀眼等离子闪光并向瞄准方向打出高速穿透激光弹，伴随机械后坐力震颤！
@@ -46,11 +52,17 @@ A high-performance dual-hand AI gesture interactive cosmic particle universe bui
 ### 🌟 Key Features & 3D Morphing Shapes
 - **160,000 High-Precision Cosmic Particles & 3D Rigid Topology (Surged to 160k Particles)**:
   1. 💃 **Marvel Armor Pei Yizhen**: **160,000 cosmic particles** forge a 1:1 pixel-level photorealistic sculpt of the oriental mecha supermodel Pei Yizhen!
+     - **🎬 2.8s Cinematic 4-Phase Anatomical Metamorphosis**: Breaking free from uniform scaling with Hollywood-grade crescendo:
+       - `⚡ [1/4] Arc Ignition`: Chest inverted Arc Reactor initiates a plasma gravitational vortex;
+       - `👢 [2/4] Kinetic Ascent`: Platinum mechanical stiletto heels and supermodel legs crystallize upwards;
+       - `🛡️ [3/4] Armor Weave`: Midnight blue and white ceramic armor plates interlock;
+       - `✨ [4/4] Divine Genesis`: Oriental facial contours and dark flowing hair emerge, segueing into a 360° celestial spin!
+     - **🌌 Dual-Spiral Orbit & Thermal Quenching**: Logarithmic tangential inflow swirls particles around the body before rapid thermal quench into 1:1 photorealistic colors!
      - **1:1 Image Pixel Cloud & Authentic Colors**: Reconstructed directly from reference character art into a 4.00 MB binary model (`peiyizhen_model.bin`) loaded in milliseconds;
      - **Divine Facial Beauty & Suit Detailing**: Gorgeous facial features, flowing black hair waving in the breeze, midnight blue metallic breastplate, and white ceramic nano-armor with gold inlays;
      - **Glowing Arc Reactor & Plasma Pulse**: Inverted triangular Arc Reactor on the chest and wrist gauntlets with high-frequency sine pulsation in brilliant cyan electric light;
-     - **Slender Armor Legs & High-Heeled Stiletto Boots**: Catwalk cross-step stance on platinum mechanical stiletto heels, rotating gracefully in 3D cosmic space;
-     - **Toggle**: Click bottom "💃 Marvel Armor Pei Yizhen" button or press keyboard "**7**" / "**B**".
+     - **Slender Armor Legs & High-Heeled Stiletto Boots**: Catwalk cross-step stance on platinum mechanical stiletto heels;
+     - **Gesture Activation**: Form a **👌 Lotus / OK Sign** (or ✌️ Peace Sign) in front of the camera, or click "💃 Marvel Armor Pei Yizhen" / press "**7**" / "**B**".
   2. 🔫 **Plasma Blaster (Finger Gun)**: Form a gun gesture with **Thumb + Index finger**, morphing 160,000 cosmic particles into a sci-fi plasma cannon!
      - **Dynamic Aiming**: Real-time 3D angular rotation tracking your index finger and wrist;
      - **Trigger Pull & Laser Fire**: Bend your thumb down (or click mouse / press Space) to fire high-energy plasma bolts with recoil feedback!
@@ -79,11 +91,17 @@ Three.js 및 Google MediaPipe Hands 알고리즘으로 구축된 고성능 양�
 ### 🌟 핵심 기능 및 3대 3D 조각 토폴로지
 - **160,000개의 고정밀 우주 입자 (16만 개 극강의 포토리얼리즘)**:
   1. 💃 **마블 아머 배이진 조각 (Marvel Armor Pei Yizhen)**: **160,000개의 성운 입자가 1:1 픽셀 단위로 정확하게** 동양적 신비의 나노 메카 슈퍼모델 배이진으로 응집됩니다!
+     - **🎬 2.8초 시네마틱 4단계 해부학적 각성 변신 시스템**: 단조로운 수축을 넘어 할리우드 영화 수준의 점진적 시각적 클라이맥스 제공:
+       - `⚡ [1/4] 아크 점화`: 흉부 역삼각형 아크 리액터의 플라즈마 중력 소용돌이 기동;
+       - `👢 [2/4] 역방향 결정화`: 백금 기계식 힐과 슈퍼모델 각선미의 상향 나노 결정화;
+       - `🛡️ [3/4] 아머 결합`: 미드나이트 블루 메탈 및 세라믹 장갑 층차 결합;
+       - `✨ [4/4] 신안 각성`: 동양적 신비의 미모와 흩날리는 흑발 완성 후 우아한 360° 우주 자전 시작!
+     - **🌌 나선형 성운 궤도 & 양자 퀜칭 발색**: 몸체 축을 감싸는 로그 나선 비행과 착지 즉시 원화 본연의 색감으로 냉각 동결!
      - **1:1 원화 기반 바이너리 포인트 클라우드**: 전신 캐릭터 원화를 분석하여 밀리초 단위로 로드되는 4.00MB 바이너리 모델(`peiyizhen_model.bin`) 탑재;
      - **완벽한 페이스라인과 슈트 디테일**: 흩날리는 흑발, 미드나이트 블루 메탈과 화이트 세라믹 나노 아머, 골드 라인 인레이;
      - **발광 아크 리액터 & 플라즈마 펄스**: 흉부 역삼각형 아크 리액터와 손목 건틀릿의 고주파 청록빛 맥동 플라즈마 효과;
-     - **슬렌더 롱다리와 기계식 하이힐 부츠**: 캣워크 크로스 스탠스와 백금 기계식 스틸레토 힐 부츠, 우주 공간에서의 우아한 3D 자전;
-     - **전환**: 하단 '💃 마블 아머 배이진' 버튼 클릭 또는 키보드 '**7**' / '**B**' 키.
+     - **슬렌더 롱다리와 기계식 하이힐 부츠**: 캣워크 크로스 스탠스와 백금 기계식 스틸레토 힐 부츠;
+     - **제스처 각성**: 카메라 앞에서 **👌 우아한 연화/OK 제스처** (또는 ✌️ 브이 제스처) 취하기, 또는 하단 '💃 마블 아머 배이진' 버튼 클릭 / 키보드 '**7**' / '**B**' 키.
   2. 🔫 **플라즈마 블래스터 (권총 제스처)**: **엄지와 검지로 권총 모양을 만들면** 160,000개의 입자가 거대한 공상과학 플라즈마 블래스터로 재구성됩니다!
   3. 🗡️ **비검결·만검귀종 (두 손가락 플라즈마 검)**: **검지와 중지를 모아 뻗으면** 160,000개의 성운 입자가 빛나는 플라즈마 검으로 응집됩니다!
   4. 🖐️ **반중력 척력 방패 (Repulsor Shield)**: 손바닥을 앞으로 활짝 펴면 강력한 반중력 파동이 방출됩니다!
