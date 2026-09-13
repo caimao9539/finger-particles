@@ -655,7 +655,7 @@
 
     <!-- 交互提示 -->
     <div id="hint-overlay">
-        🔫 <span class="gun-color">手枪姿势</span>：<b>能量手枪</b> ｜ 🗡️ <span class="sword-color">两指剑诀</span>：<b>神剑归宗</b> ｜ 💃 <span class="girl-color">漫威战甲</span>：<b>裴艺珍</b> ｜ 🖐️ <b>张掌</b>(斥力盾)
+        👌 <span class="girl-color">兰花指/OK</span>：<b>漫威战甲(裴艺珍)</b> ｜ 🔫 <span class="gun-color">手枪姿势</span>：<b>能量手枪</b> ｜ 🗡️ <span class="sword-color">两指剑诀</span>：<b>神剑归宗</b> ｜ 🖐️ <b>推掌打散</b>
     </div>
 
     <!-- 画中画 -->
@@ -678,7 +678,7 @@
         <button class="control-btn btn-pink" id="btn-demo-girl">💃 漫威战甲·裴艺珍</button>
         <button class="control-btn btn-demo" id="btn-demo-shield">🖐️ 时空斥力盾</button>
         <button class="control-btn" id="btn-demo-clap">👏 击掌激波</button>
-        <button class="control-btn" id="btn-burst">💥 超新星</button>
+        <button class="control-btn" id="btn-burst" title="一键彻底打散当前形态，粒子回归自由游离状态 (快捷键 X)">💥 打散 / 超新星</button>
         <button class="control-btn" id="btn-pip">📷 画中画</button>
         <button class="control-btn" id="btn-aspect" title="切换录屏画幅 (全屏 / 9:16 抖音 / 3:4 小红书)">📱 9:16 抖音</button>
         <button class="control-btn btn-red" id="btn-record" title="点击开始/停止录制 60FPS 高清短视频 (支持按 R 键)">🔴 一键录屏</button>
@@ -708,7 +708,7 @@
                 handCurrent: '当前手',
                 particles: '粒子',
                 clapShockwave: '👏 击掌时空激波',
-                hintOverlay: '🔫 <span class="gun-color">手枪姿势</span>：<b>能量手枪</b> ｜ 🗡️ <span class="sword-color">两指剑诀</span>：<b>神剑归宗</b> ｜ 💃 <span class="girl-color">漫威战甲</span>：<b>裴艺珍</b> ｜ 🖐️ <b>张掌</b>(斥力盾)',
+                hintOverlay: '👌 <span class="girl-color">兰花指/OK</span>：<b>漫威战甲(裴艺珍)</b> ｜ 🔫 <span class="gun-color">手枪姿势</span>：<b>能量手枪</b> ｜ 🗡️ <span class="sword-color">两指剑诀</span>：<b>神剑归宗</b> ｜ 🖐️ <b>推掌打散</b>',
                 pipTitle: '👐 AI 视觉感知监控',
                 pipExpand: '⤢ 放大',
                 pipCollapse: '⤡ 还原',
@@ -721,7 +721,7 @@
                 btnGirl: '💃 漫威战甲·裴艺珍',
                 btnShield: '🖐️ 时空斥力盾',
                 btnClap: '👏 击掌激波',
-                btnBurst: '💥 超新星',
+                btnBurst: '💥 打散 / 超新星',
                 btnPip: '📷 画中画',
                 aspectDouyin: '📱 9:16 抖音',
                 aspectXiaohongshu: '📕 3:4 小红书',
@@ -739,18 +739,19 @@
                     POINTER: '👉 单指画星轨',
                     SWORD: '🗡️ 2指剑诀(神剑)',
                     GUN: '🔫 能量手枪(瞄准)',
-                    GIRL: '💃 漫威战甲(裴艺珍)',
-                    REPULSOR: '🖐️ 掌心斥力盾',
+                    GIRL: '👌 兰花仙手(漫威战甲)',
+                    REPULSOR: '🖐️ 掌心斥力盾(推散)',
                     FIST: '✊ 凝聚蓄力',
-                    IDLE: '✋ 自然巡航'
+                    IDLE: '✋ 自由游离'
                 },
                 statusGunReady: '🔫 能量手枪已激活！再次点击按钮或屏幕任意位置即可开火！',
                 statusSwordReady: '🗡️ 2指剑诀已激活！160,000 颗星尘粒子凝聚成神剑！',
                 statusGirlReady: '💃 漫威战甲·裴艺珍已唤醒！160,000 颗高精粒子 1:1 像素级凝聚为机甲超模，方舟反应堆脉冲充能！',
                 statusSwordIdle: '✨ 粒子解体，繁星散落...',
-                statusShieldReady: '🖐️ 掌心时空斥力盾已激活！',
+                statusShieldReady: '🖐️ 掌心时空斥力盾已激活！推掌可打散粒子！',
                 statusClapReady: '👏 击掌时空激波已引爆！环形能量震荡全屏！',
                 statusSupernova: '💥 超新星爆发！能量释放星尘全屏飞溅...',
+                statusDispersed: '💥 形态彻底解散打散！160,000 颗星尘粒子回归深空自由游离...',
                 statusLangSwitched: '🌐 已切换语言：中文'
             },
             en: {
@@ -769,7 +770,7 @@
                 handCurrent: 'Active Hand',
                 particles: 'particles',
                 clapShockwave: '👏 Cosmic Clap Wave',
-                hintOverlay: '🔫 <span class="gun-color">Finger Gun</span>: <b>Plasma Blaster</b> ｜ 🗡️ <span class="sword-color">Sword Dance</span>: <b>Dual-Blade</b> ｜ 💃 <span class="girl-color">Marvel Armor</span>: <b>Pei Yizhen</b> ｜ 🖐️ <b>Open Palm</b>',
+                hintOverlay: '👌 <span class="girl-color">Lotus/OK</span>: <b>Marvel Armor Pei Yizhen</b> ｜ 🔫 <span class="gun-color">Finger Gun</span>: <b>Plasma Blaster</b> ｜ 🗡️ <span class="sword-color">Sword Dance</span>: <b>Dual-Blade</b> ｜ 🖐️ <b>Palm Repulse & Disperse</b>',
                 pipTitle: '👐 AI Vision Sensor',
                 pipExpand: '⤢ Expand',
                 pipCollapse: '⤡ Reset',
@@ -782,7 +783,7 @@
                 btnGirl: '💃 Marvel Armor Pei Yizhen',
                 btnShield: '🖐️ Repulsor Shield',
                 btnClap: '👏 Cosmic Clap',
-                btnBurst: '💥 Supernova',
+                btnBurst: '💥 Disperse / Supernova',
                 btnPip: '📷 Camera PIP',
                 aspectDouyin: '📱 9:16 Portrait',
                 aspectXiaohongshu: '📕 3:4 Social',
@@ -800,10 +801,10 @@
                     POINTER: '👉 Cosmic Beam',
                     SWORD: '🗡️ Dual-Blade',
                     GUN: '🔫 Plasma Cannon',
-                    GIRL: '💃 Marvel Armor',
+                    GIRL: '👌 Lotus/OK (Marvel Armor)',
                     REPULSOR: '🖐️ Repulsor Shield',
                     FIST: '✊ Energy Charge',
-                    IDLE: '✋ Free Roam'
+                    IDLE: '✋ Free Drift'
                 },
                 statusGunReady: '🔫 Plasma Blaster active! Click anywhere to unleash laser fire!',
                 statusSwordReady: '🗡️ Dual-Blade active! 160,000 cosmic particles forged into blade!',
@@ -812,6 +813,7 @@
                 statusShieldReady: '🖐️ Repulsor shield activated! Repelling stellar particles!',
                 statusClapReady: '👏 Cosmic clap shockwave unleashed! Ring ripples pulsing across cosmos!',
                 statusSupernova: '💥 Supernova burst! Cosmic dust scattering into infinity...',
+                statusDispersed: '💥 Topology dispersed! 160,000 particles drifting freely in cosmic sea...',
                 statusLangSwitched: '🌐 Language switched: English'
             },
             ko: {
@@ -830,7 +832,7 @@
                 handCurrent: '현재 손',
                 particles: '입자',
                 clapShockwave: '👏 박수 시공간 충격파',
-                hintOverlay: '🔫 <span class="gun-color">권총 제스처</span>: <b>플라즈마 블래스터</b> ｜ 🗡️ <span class="sword-color">비검결</span>: <b>만검귀종</b> ｜ 💃 <span class="girl-color">마블 아머</span>: <b>배이진</b> ｜ 🖐️ <b>손바닥</b>',
+                hintOverlay: '👌 <span class="girl-color">연화수/OK</span>: <b>마블 아머 배이진</b> ｜ 🔫 <span class="gun-color">권총 제스처</span>: <b>플라즈마 블래스터</b> ｜ 🗡️ <span class="sword-color">비검결</span>: <b>만검귀종</b> ｜ 🖐️ <b>손바닥 밀기(분산)</b>',
                 pipTitle: '👐 AI 비전 센서 모니터링',
                 pipExpand: '⤢ 확대',
                 pipCollapse: '⤡ 복원',
@@ -843,7 +845,7 @@
                 btnGirl: '💃 마블 아머 배이진',
                 btnShield: '🖐️ 반중력 척력 방패',
                 btnClap: '👏 박수 충격파',
-                btnBurst: '💥 초신성 폭발',
+                btnBurst: '💥 입자 분산 / 초신성',
                 btnPip: '📷 PIP 화면',
                 aspectDouyin: '📱 9:16 세로 모드',
                 aspectXiaohongshu: '📕 3:4 포트레이트',
@@ -861,18 +863,19 @@
                     POINTER: '👉 성운 광선',
                     SWORD: '🗡️ 비검결(신검)',
                     GUN: '🔫 플라즈마포',
-                    GIRL: '💃 마블 아머 배이진',
-                    REPULSOR: '🖐️ 척력 방패',
+                    GIRL: '👌 연화수 (마블 아머 배이진)',
+                    REPULSOR: '🖐️ 척력 방패(입자 분산)',
                     FIST: '✊ 기 충전',
-                    IDLE: '✋ 자유 비행'
+                    IDLE: '✋ 자유 유영'
                 },
                 statusGunReady: '🔫 플라즈마 블래스터 활성화! 화면을 클릭하여 레이저 탄환을 발사하세요!',
                 statusSwordReady: '🗡️ 비검결 활성화! 160,000개의 성운 입자가 검으로 응집되었습니다!',
                 statusGirlReady: '💃 마블 아머 배이진 각성! 160,000개의 성운 입자가 아크 리액터 나노 슈트 슈퍼모델로 응집되었습니다!',
                 statusSwordIdle: '✨ 입자가 해체되며 별빛으로 흩어집니다...',
-                statusShieldReady: '🖐️ 반중력 척力 방패 활성화!',
+                statusShieldReady: '🖐️ 반중력 척력 방패 활성화! 밀어서 입자를 분산시킵니다!',
                 statusClapReady: '👏 박수 시공간 충격파 폭발! 링 형태의 에너지가 화면 전체로 전파됩니다!',
                 statusSupernova: '💥 초신성 대폭발! 성운 에너지가 전방위로 방출됩니다...',
+                statusDispersed: '💥 토폴로지 분산 해체! 160,000개의 성운 입자가 심우주 자유 유영 상태로 진입합니다...',
                 statusLangSwitched: '🌐 언어 변경 완료: 한국어'
             }
         };
@@ -1869,8 +1872,8 @@
             activeShockwaves.push({
                 center: center,
                 radius: 12,
-                speed: 820,
-                maxRadius: 920,
+                speed: 880,
+                maxRadius: 960,
                 life: 1.0
             });
 
@@ -1879,7 +1882,12 @@
             clapBadge.style.animation = 'pulse-dot 0.3s 3';
             setTimeout(() => { clapBadge.style.display = 'none'; }, 1800);
 
-            updateStatus('👏 击掌引爆时空激波！72,000 粒子剧烈震荡共振！', '#facc15');
+            // 若当前处于武器或战甲形态，激波强力将形态震碎并打散！
+            if (currentWeapon !== 'NONE') {
+                disperseToFreeGalaxy(center);
+            } else {
+                updateStatus(I18N[currentLang]?.statusClapReady || '👏 击掌引爆时空激波！160,000 粒子剧烈震荡共振！', '#facc15');
+            }
         }
 
         function triggerSupernova(origin) {
@@ -1895,15 +1903,41 @@
                 let dz = posAttr[i3 + 2] - cz;
                 let dist = Math.sqrt(dx * dx + dy * dy + dz * dz) + 0.1;
 
-                const burstPower = (Math.random() * 22 + 16) * (220 / (dist + 35));
-                velocities[i3] += (dx / dist) * burstPower + (Math.random() - 0.5) * 5;
-                velocities[i3 + 1] += (dy / dist) * burstPower + (Math.random() - 0.5) * 5;
-                velocities[i3 + 2] += (dz / dist) * burstPower + (Math.random() - 0.5) * 5;
+                const burstPower = (Math.random() * 26 + 18) * (260 / (dist + 35));
+                velocities[i3] += (dx / dist) * burstPower + (Math.random() - 0.5) * 6;
+                velocities[i3 + 1] += (dy / dist) * burstPower + (Math.random() - 0.5) * 6;
+                velocities[i3 + 2] += (dz / dist) * burstPower + (Math.random() - 0.5) * 6;
             }
 
             coreL.mat.opacity = 1.0;
             coreR.mat.opacity = 1.0;
-            updateStatus('💥 超新星爆发！能量释放星尘全屏飞溅...', '#f59e0b');
+        }
+
+        // 💥 全局形态彻底解散与自由游离转换函数
+        function disperseToFreeGalaxy(origin) {
+            const burstCenter = origin ? origin.clone() : 
+                (HANDS[0].active ? HANDS[0].smoothPos.clone() : 
+                (HANDS[1].active ? HANDS[1].smoothPos.clone() : new THREE.Vector3(0, 0, 0)));
+
+            // 彻底解散并归零武器/战甲形态
+            currentWeapon = 'NONE';
+            targetWeaponType = 'NONE';
+            weaponProgress = 0.0;
+            material.size = 2.4; // 恢复到星海粒子自然尺寸
+
+            // 重置鼠标/键盘模拟触发
+            MOUSE.gesture = GESTURES.IDLE;
+            MOUSE.active = false;
+
+            // 重置全部状态徽章
+            badgeLeft.classList.remove('badge-weapon-active');
+            badgeRight.classList.remove('badge-weapon-active');
+            if (!HANDS[0].active) badgeLeftText.textContent = I18N[currentLang]?.hudStandbyL || '手部 1: 等待感应';
+            if (!HANDS[1].active) badgeRightText.textContent = I18N[currentLang]?.hudStandbyR || '手部 2: 等待感应';
+
+            // 粒子全域爆发打散
+            triggerSupernova(burstCenter);
+            updateStatus(I18N[currentLang]?.statusDispersed || '💥 粒子解体打散！160,000 颗星尘进入深空自由游离状态...', '#38bdf8');
         }
 
         // ==========================================
@@ -2314,13 +2348,15 @@
                             }
                         }
                     }
+                }
 
-                } else if (activeHands.length > 0) {
+                // 🖐️ 手部交互力场（无论是否处于武器/战甲形态，推掌 REPULSOR 都能对粒子施加强大斥力，实现掌风打散！）
+                if (activeHands.length > 0) {
                     for (let h = 0; h < activeHands.length; h++) {
                         const hand = activeHands[h];
                         const gest = hand.gesture;
 
-                        if (gest === GESTURES.PINCH) {
+                        if (gest === GESTURES.PINCH && currentWeapon === 'NONE') {
                             hasInteracted = true;
                             const tx = hand.smoothPos.x, ty = hand.smoothPos.y, tz = hand.smoothPos.z;
                             const dx = tx - px, dy = ty - py, dz = tz - pz;
@@ -2346,8 +2382,9 @@
                             const distSq = dx * dx + dy * dy + dz * dz + 100;
                             const dist = Math.sqrt(distSq);
 
-                            if (dist < 240) {
-                                const repulseForce = 32000 / distSq;
+                            if (dist < 260) {
+                                // 掌风强力排斥波：处于形态下赋予高达 48,000 的排斥冲力，掌心直击粒子瞬间炸散！
+                                const repulseForce = (weaponProgress > 0.001 ? 52000 : 32000) / distSq;
                                 vx += (dx / dist) * repulseForce;
                                 vy += (dy / dist) * repulseForce;
                                 vz += (dz / dist) * repulseForce;
@@ -2388,10 +2425,10 @@
 
                         if (diff < 45) {
                             hasInteracted = true;
-                            const shockForce = (1.0 - diff / 45) * 18.0 * wave.life;
+                            const shockForce = (1.0 - diff / 45) * 24.0 * wave.life;
                             vx += (dx / dist) * shockForce;
                             vy += (dy / dist) * shockForce;
-                            vz += (dz / dist) * shockForce + (Math.random() - 0.5) * 4;
+                            vz += (dz / dist) * shockForce + (Math.random() - 0.5) * 5;
                             colAttr[i3] = 1.0; colAttr[i3 + 1] = 0.9; colAttr[i3 + 2] = 0.4;
                         }
                     }
@@ -2402,13 +2439,32 @@
                     const hy = homePositions[i3 + 1];
                     const hz = homePositions[i3 + 2];
 
-                    vx += (hx - px) * 0.0032;
-                    vy += (hy - py) * 0.0032;
-                    vz += (hz - pz) * 0.0032;
+                    if (currentWeapon === 'NONE') {
+                        // 🌌 宇宙微风游离流动场 (Cosmic Fluid Drift)
+                        // 让 160,000 颗星尘在深空游离状态下呈现极光般的波浪漫游漂浮，具有生命灵动呼吸感
+                        const driftTime = timeNowSec * 0.55;
+                        const driftSpatial = hx * 0.006 + hy * 0.008 + hz * 0.005;
+                        const driftAmp = 0.45;
+                        vx += Math.sin(driftTime + driftSpatial) * driftAmp;
+                        vy += Math.cos(driftTime * 0.85 + driftSpatial) * driftAmp;
+                        vz += Math.sin(driftTime * 1.15 - driftSpatial) * (driftAmp * 0.7);
 
-                    vx *= 0.96;
-                    vy *= 0.96;
-                    vz *= 0.96;
+                        vx += (hx - px) * 0.0020;
+                        vy += (hy - py) * 0.0020;
+                        vz += (hz - pz) * 0.0020;
+
+                        vx *= 0.965;
+                        vy *= 0.965;
+                        vz *= 0.965;
+                    } else {
+                        vx += (hx - px) * 0.0032;
+                        vy += (hy - py) * 0.0032;
+                        vz += (hz - pz) * 0.0032;
+
+                        vx *= 0.96;
+                        vy *= 0.96;
+                        vz *= 0.96;
+                    }
                 }
 
                 posAttr[i3] = px + vx;
@@ -2493,15 +2549,23 @@
 
             const pinchDistRel = Math.hypot(thumbTip.x - indexTip.x, thumbTip.y - indexTip.y) / palmScale;
 
-            // 1. 捏合判定 (黑洞吸附)
+            const isIndexExt = (rIndex > 1.25) && (distWrist(indexTip) > distWrist(indexPip) * 1.04);
+            const isMiddleExt = (rMiddle > 1.22) && (distWrist(middleTip) > distWrist(middlePip) * 1.04);
+            const isRingExt = (rRing > 1.15);
+            const isPinkyExt = (rPinky > 1.12);
+            const areRingPinkyCurled = (rRing < 1.15 || rRing < rIndex * 0.76) && 
+                                    (rPinky < 1.15 || rPinky < rIndex * 0.76);
+
+            // 0. 👌 优雅兰花仙手 / 极光 OK 手势 (Lotus / OK Sign) -> 唤醒漫威战甲·裴艺珍
+            // 拇指与食指捏合成环，中指、无名指、小指三指向上挺拔翘起（具有东方古典仙韵与极光漫威科技）
+            if (pinchDistRel < 0.38 && isMiddleExt && (isRingExt || isPinkyExt)) {
+                return GESTURES.GIRL;
+            }
+
+            // 1. 🤏 普通捏合判定 (黑洞吸附)
             if (pinchDistRel < 0.32) {
                 return GESTURES.PINCH;
             }
-
-            const isIndexExt = (rIndex > 1.25) && (distWrist(indexTip) > distWrist(indexPip) * 1.04);
-            const isMiddleExt = (rMiddle > 1.25) && (distWrist(middleTip) > distWrist(middlePip) * 1.04);
-            const areRingPinkyCurled = (rRing < 1.15 || rRing < rIndex * 0.76) && 
-                                    (rPinky < 1.15 || rPinky < rIndex * 0.76);
 
             // 2. 🔫 拇指与食指手枪姿势判定 (Finger Gun)
             // 食指伸直向前，大拇指耸立竖起，且拇指与食指分开 (非捏合)
@@ -2513,8 +2577,15 @@
                 return GESTURES.GUN;
             }
 
-            // 3. 🗡️ 食指+中指双指剑诀判定 (Sword)
+            // 3. 🗡️ 双指剑诀 / ✌️ 剪刀手比耶
             if (isIndexExt && isMiddleExt && areRingPinkyCurled) {
+                // 计算食指与中指的间距，精细区分并拢神剑与张开比耶
+                const fingerSpread = Math.hypot(indexTip.x - middleTip.x, indexTip.y - middleTip.y) / palmScale;
+                if (fingerSpread > 0.40) {
+                    // ✌️ 剪刀手分叉张开：亦可自拍唤醒漫威战甲·裴艺珍
+                    return GESTURES.GIRL;
+                }
+                // 🗡️ 两指紧紧并拢：双指神剑
                 return GESTURES.SWORD;
             }
 
@@ -2885,11 +2956,13 @@
                 } else {
                     triggerClapShockwave(new THREE.Vector3(0, 0, 0));
                 }
+            } else if (e.key.toLowerCase() === 'x') {
+                // X 键：一键彻底打散当前形态，回归自由游离星空
+                disperseToFreeGalaxy();
             } else if (e.key === '6' || e.key.toLowerCase() === 'g') {
                 // G 键：切换能量手枪形态
-                if (MOUSE.gesture === GESTURES.GUN) {
-                    MOUSE.gesture = GESTURES.IDLE;
-                    updateStatus('✨ 手枪解除，繁星散开...', '#38bdf8');
+                if (MOUSE.gesture === GESTURES.GUN || currentWeapon === 'GUN') {
+                    disperseToFreeGalaxy();
                 } else {
                     MOUSE.active = true;
                     MOUSE.gesture = GESTURES.GUN;
@@ -2900,29 +2973,27 @@
                 }
             } else if (e.key === '5' || e.key.toLowerCase() === 's') {
                 // S 键：切换神剑形态
-                if (MOUSE.gesture === GESTURES.SWORD) {
-                    MOUSE.gesture = GESTURES.IDLE;
-                    updateStatus('✨ 神剑解除，繁星散落...', '#38bdf8');
+                if (MOUSE.gesture === GESTURES.SWORD || currentWeapon === 'SWORD') {
+                    disperseToFreeGalaxy();
                 } else {
                     MOUSE.active = true;
                     MOUSE.gesture = GESTURES.SWORD;
                     MOUSE.targetPos.set(0, -60, 0);
                     MOUSE.smoothPos.set(0, -60, 0);
                     MOUSE.aimDirection.set(0.4, 0.9, 0).normalize();
-                    updateStatus('🗡️ 2指剑诀已激活！72,000 颗星尘粒子凝聚成神剑！', '#facc15');
+                    updateStatus('🗡️ 2指剑诀已激活！160,000 颗星尘粒子凝聚成神剑！', '#facc15');
                 }
             } else if (e.key === '7' || e.key.toLowerCase() === 'b') {
                 // 7 或 B 键：切换现代丽人超模雕塑形态
-                if (MOUSE.gesture === GESTURES.GIRL) {
-                    MOUSE.gesture = GESTURES.IDLE;
-                    updateStatus('✨ 超模解体，繁星散落太空...', '#38bdf8');
+                if (MOUSE.gesture === GESTURES.GIRL || currentWeapon === 'GIRL') {
+                    disperseToFreeGalaxy();
                 } else {
                     MOUSE.active = true;
                     MOUSE.gesture = GESTURES.GIRL;
                     MOUSE.targetPos.set(0, 18, 0);
                     MOUSE.smoothPos.set(0, 18, 0);
                     MOUSE.aimDirection.set(0, 1, 0).normalize();
-                    updateStatus(I18N[currentLang]?.statusGirlReady || '💃 现代丽人已唤醒！72,000 颗星尘粒子凝聚为 8 头身修长美腿超模！', '#f472b6');
+                    updateStatus(I18N[currentLang]?.statusGirlReady || '💃 漫威战甲·裴艺珍已唤醒！160,000 颗高精粒子 1:1 像素级凝聚为机甲超模！', '#f472b6');
                 }
             } else if (e.key === '1') {
                 MOUSE.active = true;
@@ -2931,7 +3002,7 @@
             } else if (e.key === '2') {
                 MOUSE.active = true;
                 MOUSE.gesture = GESTURES.REPULSOR;
-                updateStatus('🖐️ 键盘[2]模拟：掌心时空斥力盾开启', '#34d399');
+                updateStatus('🖐️ 键盘[2]模拟：掌心时空斥力盾开启 (推掌可打散粒子)', '#34d399');
             } else if (e.key === '3') {
                 MOUSE.active = true;
                 MOUSE.gesture = GESTURES.PINCH;
@@ -3200,11 +3271,8 @@
         });
 
         document.getElementById('btn-demo-sword').addEventListener('click', () => {
-            if (MOUSE.gesture === GESTURES.SWORD) {
-                MOUSE.gesture = GESTURES.IDLE;
-                badgeRight.classList.remove('active-badge', 'badge-weapon-active');
-                badgeRightText.textContent = I18N[currentLang]?.handWait || '手部: 待命';
-                updateStatus(I18N[currentLang]?.statusSwordIdle || '✨ 粒子解体，繁星散落...', '#38bdf8');
+            if (MOUSE.gesture === GESTURES.SWORD || currentWeapon === 'SWORD') {
+                disperseToFreeGalaxy();
             } else {
                 MOUSE.active = true;
                 MOUSE.gesture = GESTURES.SWORD;
@@ -3220,11 +3288,8 @@
         const btnDemoGirl = document.getElementById('btn-demo-girl');
         if (btnDemoGirl) {
             btnDemoGirl.addEventListener('click', () => {
-                if (MOUSE.gesture === GESTURES.GIRL) {
-                    MOUSE.gesture = GESTURES.IDLE;
-                    badgeRight.classList.remove('active-badge', 'badge-weapon-active');
-                    badgeRightText.textContent = I18N[currentLang]?.handWait || '手部: 待命';
-                    updateStatus(I18N[currentLang]?.statusSwordIdle || '✨ 粒子解体，繁星散落...', '#38bdf8');
+                if (MOUSE.gesture === GESTURES.GIRL || currentWeapon === 'GIRL') {
+                    disperseToFreeGalaxy();
                 } else {
                     MOUSE.active = true;
                     MOUSE.gesture = GESTURES.GIRL;
@@ -3232,8 +3297,8 @@
                     MOUSE.smoothPos.set(0, 18, 0);
                     MOUSE.aimDirection.set(0, 1, 0).normalize();
                     badgeRight.classList.add('active-badge', 'badge-weapon-active');
-                    badgeRightText.textContent = `${I18N[currentLang]?.handCurrent || '当前手'}: ${I18N[currentLang]?.gestures?.GIRL || '💃 现代丽人'}`;
-                    updateStatus(I18N[currentLang]?.statusGirlReady || '💃 现代丽人已唤醒！72,000 颗星尘粒子凝聚为 8 头身修长美腿超模！', '#f472b6');
+                    badgeRightText.textContent = `${I18N[currentLang]?.handCurrent || '当前手'}: ${I18N[currentLang]?.gestures?.GIRL || '👌 兰花仙手'}`;
+                    updateStatus(I18N[currentLang]?.statusGirlReady || '💃 漫威战甲·裴艺珍已唤醒！160,000 颗高精粒子 1:1 像素级凝聚为机甲超模！', '#f472b6');
                 }
             });
         }
@@ -3243,7 +3308,7 @@
             MOUSE.gesture = GESTURES.REPULSOR;
             MOUSE.targetPos.set(0, 0, 0);
             MOUSE.smoothPos.set(0, 0, 0);
-            updateStatus('🖐️ 掌心时空斥力盾演示中...', '#34d399');
+            updateStatus('🖐️ 掌心时空斥力盾演示中... 推掌可打散粒子！', '#34d399');
             setTimeout(() => { MOUSE.gesture = GESTURES.IDLE; }, 2500);
         });
 
@@ -3252,7 +3317,7 @@
         });
 
         document.getElementById('btn-burst').addEventListener('click', () => {
-            triggerSupernova(HANDS[0].active ? HANDS[0].smoothPos : (HANDS[1].active ? HANDS[1].smoothPos : new THREE.Vector3()));
+            disperseToFreeGalaxy();
         });
 
         let showPip = true;
