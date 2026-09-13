@@ -8,14 +8,14 @@
 
 基于 Three.js 与 Google MediaPipe Hands 算法打造的高性能双手 AI 手势交互星空粒子系统。免安装免编译，原生纯前端轻量化运行。
 
-### 🌟 核心特色与七大多态形态
+#### 🌟 核心特色与七大多态形态
 - **72,000 颗高精星尘粒子与 3D 刚体拓扑（粒子数量翻倍）**：
-  1. 💃 **现代丽人·超模身姿 (Modern Chic Supermodel)**：全场 **72,000 颗星尘粒子**瞬间凝聚为高达 307px 的 8.2 头身现代超模 3D 雕塑！
-     - **真实人体解剖学黄金比例**：告别传统抽象长裙与王冠，真实塑造现代女性绝美身姿——精致瓜子脸、侧分蓬松法式大波浪长卷发、一字直角锁骨香肩、立体饱满挺拔双峰、极致纤细沙漏蜂腰；
-     - **超模走秀姿态与高定短裙**：右手自信叉腰、左手微曲优雅垂落；身着深酒红高腰包臀超短裙（干脆利落收口在臀下线，绝不遮挡双腿）；
-     - **逆天修长双腿与细高跟鞋**：整整 155px（占全身 50% 黄金高度）笔直修长的超模美腿，左右腿独立分离且呈微交叉走秀步态；足背绷直向前弓起，踩着极细金属鞋跟与红底尖头细高跟鞋；
-     - **微风与高定时装材质**：发丝随微风拂动，焦糖金棕秀发、温润桃粉雪肌与高饱和深酒红短裙形成鲜明对比，整尊超模在太空中优雅自转；
-     - **唤醒方式**：点击底部「💃 现代丽人」按钮，或按键盘「**7**」/「**B**」。
+  1. 💃 **漫威战甲·裴艺珍 (Marvel Armor Pei Yizhen)**：全场 **72,000 颗星尘粒子 1:1 像素级精准还原**东方神颜漫威机甲超模！
+     - **1:1 原画像素级拓扑与真实色彩**：基于全身高清参考图，利用 AI 抠图与 3D 深度方程提取 72,000 颗高精粒子，搭载 1.80 MB 二进制流模型（`peiyizhen_model.bin`）毫秒级加载；
+     - **绝美神颜与战衣细节**：东方神颜精致面容与红润唇珠、侧分飘逸黑发随微风轻拂、深蓝金属胸甲与白金陶瓷纳米机甲护甲、黄金细线精工勾勒；
+     - **胸口发光方舟反应堆与手腕等离子微光**：胸口倒三角方舟反应堆与手腕电弧附带独立高频脉冲呼吸算法，绽放耀眼苍蓝极光！
+     - **逆天修长机甲双腿与机械高跟战靴**：修长分立的纳米战甲美腿呈现超模微交叉走秀步态，足蹬白金机械尖头高跟战靴，在太空中优雅自转；
+     - **唤醒方式**：点击底部「💃 漫威战甲·裴艺珍」按钮，或按键盘「**7**」/「**B**」。
   2. 🔫 **粒子能量手枪 (Plasma Cannon)**：**拇指+食指比出手枪手势**，72,000 颗粒子聚拢拓扑重构为一把科幻手枪！
      - **瞄准追踪**：随手腕与食指方向实时 3D 旋转瞄准；
      - **扣扳机开火**：拇指自然下压扣动扳机（或点击鼠标/按空格键），枪口喷射耀眼等离子闪光并向瞄准方向打出高速穿透激光弹，伴随机械后坐力震颤！
@@ -27,7 +27,7 @@
 - **8 套高饱和宏大星系色彩（色彩种类翻倍）**：
   - 仙女座梦幻、赛博极光霓虹、炽烈恒星超新星、七彩虹光棱镜、**🌸 樱花洛丽塔**、**🌊 深海琉璃幻影**、**👑 暗夜黑金流火**、**🍬 马卡龙暮云霞光**，支持多层流光渐变。
 - **短视频与自媒体专属录屏排版**：
-  - 📱 **9:16 抖音/TikTok 沉浸竖屏** & 📕 **3:4 小红书黄金画幅**，摄像机智能拉远，超模、神剑与手枪震撼满屏；
+  - 📱 **9:16 抖音/TikTok 沉浸竖屏** & 📕 **3:4 小红书黄金画幅**，摄像机智能拉远，漫威战甲、神剑与手枪震撼满屏；
   - 🛡️ **短视频安全区防遮挡**：大屏画中画智能居中置底，彻底避开点赞栏与底部文案；
   - 🎬 **一键 60FPS 原生高清直录**：点击「🔴 一键录屏」即录即下，按「**H**」一键隐藏全部 UI 纯净出片。
 - **🌐 多语言国际化 (i18n)**：支持**中文**、**English**、**한국어**无缝热切换（点击右上角胶囊或按键盘「**L**」）。
@@ -43,12 +43,12 @@ A high-performance dual-hand AI gesture interactive cosmic particle universe bui
 
 ### 🌟 Key Features & 3D Morphing Shapes
 - **72,000 High-Precision Cosmic Particles & 3D Rigid Topology (Doubled Particle Density)**:
-  1. 💃 **Modern Chic Supermodel**: **72,000 cosmic particles** forge into a stunning 307px 3D statue of an 8.2-head golden-ratio modern supermodel!
-     - **Realistic Female Anatomy**: Say goodbye to abstract cone dresses — crafted with delicate oval face, side-swept voluminous French wavy curls, straight clavicles, sculpted bust, and an ultra-slender hourglass waist;
-     - **Catwalk Runway Pose**: Right hand placed confidently on the hip, left arm gracefully draped; wearing a high-waisted deep burgundy velvet mini skirt;
-     - **Slender Legs & Stiletto Heels**: 155px (50% of total height) independent long legs in a catwalk cross-step stance, arched feet in red-sole stiletto high heels with sharp metal spikes;
-     - **Wind Breeze Dynamics**: Caramel-blonde hair waving gently in the cosmic breeze with contrasting skin tone and vibrant velvet dress;
-     - **Toggle**: Click bottom "💃 Modern Chic" button or press keyboard "**7**" / "**B**".
+  1. 💃 **Marvel Armor Pei Yizhen**: **72,000 cosmic particles** forge a 1:1 pixel-level sculpt of the oriental mecha supermodel Pei Yizhen!
+     - **1:1 Image Pixel Cloud & Authentic Colors**: Reconstructed directly from reference character art into a 1.80 MB binary model (`peiyizhen_model.bin`) loaded in milliseconds;
+     - **Divine Facial Beauty & Suit Detailing**: Gorgeous facial features, flowing black hair waving in the breeze, midnight blue metallic breastplate, and white ceramic nano-armor with gold inlays;
+     - **Glowing Arc Reactor & Plasma Pulse**: Inverted triangular Arc Reactor on the chest and wrist gauntlets with high-frequency sine pulsation in brilliant cyan electric light;
+     - **Slender Armor Legs & High-Heeled Stiletto Boots**: Catwalk cross-step stance on platinum mechanical stiletto heels, rotating gracefully in 3D cosmic space;
+     - **Toggle**: Click bottom "💃 Marvel Armor Pei Yizhen" button or press keyboard "**7**" / "**B**".
   2. 🔫 **Plasma Blaster (Finger Gun)**: Form a gun gesture with **Thumb + Index finger**, morphing 72,000 cosmic particles into a sci-fi plasma cannon!
      - **Dynamic Aiming**: Real-time 3D angular rotation tracking your index finger and wrist;
      - **Trigger Pull & Laser Fire**: Bend your thumb down (or click mouse / press Space) to fire high-energy plasma bolts with recoil feedback!
@@ -76,12 +76,12 @@ Three.js 및 Google MediaPipe Hands 알고리즘으로 구축된 고성능 양�
 
 ### 🌟 핵심 기능 및 3대 3D 조각 토폴로지
 - **72,000개의 고정밀 우주 입자 (입자 수 2배 확대)**:
-  1. 💃 **모던 레이디 슈퍼모델 조각 (Modern Chic Supermodel)**: **72,000개의 성운 입자**가 307px 높이의 8.2등신 황금비율 현대 여성 슈퍼모델 조각으로 응집됩니다!
-     - **현대적 여성 인체 해부학**: 추상적인 롱드레스 탈피 — 계란형 페이스라인, 사이드 웨이브 볼륨 펌 헤어, 일자 쇄골과 볼륨감 넘치는 바스트, 극도로 잘록한 모래시계 개미허리;
-     - **런웨이 캣워크 포즈**: 오른손은 당당하게 허리에 올리고 왼손은 자연스럽게 늘어뜨린 포즈; 딥 버건디 하이웨이스트 미니스커트 착용;
-     - **슬렌더 롱다리와 스틸레토 힐**: 전체 신장의 50%(155px)에 달하는 곧고 매끄러운 롱다리, 다리 사이 간격과 캣워크 크로스 스탠스, 팽팽하게 휜 발등과 바닥에 꽂히는 아찔한 스틸레토 힐;
-     - **미풍 다이내믹스**: 미풍에 흩날리는 브라운 헤어와 깊은 버건디 스커트의 대비, 3D 공간에서의 우아한 자전;
-     - **전환**: 하단 '💃 모던 레이디' 버튼 클릭 또는 키보드 '**7**' / '**B**' 키.
+  1. 💃 **마블 아머 배이진 조각 (Marvel Armor Pei Yizhen)**: **72,000개의 성운 입자가 1:1 픽셀 단위로 정확하게** 동양적 신비의 나노 메카 슈퍼모델 배이진으로 응집됩니다!
+     - **1:1 원화 기반 바이너리 포인트 클라우드**: 전신 캐릭터 원화를 분석하여 밀리초 단위로 로드되는 1.80MB 바이너리 모델(`peiyizhen_model.bin`) 탑재;
+     - **완벽한 페이스라인과 슈트 디테일**: 흩날리는 흑발, 미드나이트 블루 메탈과 화이트 세라믹 나노 아머, 골드 라인 인레이;
+     - **발광 아크 리액터 & 플라즈마 펄스**: 흉부 역삼각형 아크 리액터와 손목 건틀릿의 고주파 청록빛 맥동 플라즈마 효과;
+     - **슬렌더 롱다리와 기계식 하이힐 부츠**: 캣워크 크로스 스탠스와 백금 기계식 스틸레토 힐 부츠, 우주 공간에서의 우아한 3D 자전;
+     - **전환**: 하단 '💃 마블 아머 배이진' 버튼 클릭 또는 키보드 '**7**' / '**B**' 키.
   2. 🔫 **플라즈마 블래스터 (권총 제스처)**: **엄지와 검지로 권총 모양을 만들면** 72,000개의 입자가 거대한 공상과학 플라즈마 블래스터로 재구성됩니다!
   3. 🗡️ **비검결·만검귀종 (두 손가락 플라즈마 검)**: **검지와 중지를 모아 뻗으면** 72,000개의 성운 입자가 빛나는 플라즈마 검으로 응집됩니다!
   4. 🖐️ **반중력 척력 방패 (Repulsor Shield)**: 손바닥을 앞으로 활짝 펴면 강력한 반중력 파동이 방출됩니다!
@@ -105,7 +105,7 @@ start.bat을 실행하거나 로컬 웹 서버(python -m http.server 8088)를 �
 
 | 动作 / Action / 동작 | 快捷键 / Shortcut / 단축키 |
 | :--- | :---: |
-| 💃 现代丽人 / Modern Chic / 모던 레이디 | **7** 或 **B** |
+| 💃 漫威战甲·裴艺珍 / Marvel Armor / 마블 아머 배이진 | **7** 或 **B** |
 | 🔫 能量手枪 / Plasma Blaster / 플라즈마 블래스터 | 6 或 G |
 | 💥 开火射击 / Fire Blaster / 발사 | 空格 / Space / F / 鼠标左键 |
 | 🗡️ 双指神剑 / Dual-Blade / 비검결 | 5 或 S |
