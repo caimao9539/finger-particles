@@ -173,6 +173,11 @@
             font-weight: 700;
         }
 
+        .girl-color {
+            color: #f472b6 !important;
+            font-weight: 700;
+        }
+
         /* 左下角双手监控画中画 (升级为大屏超清监控) */
         #camera-pip-box {
             position: absolute;
@@ -335,6 +340,19 @@
             background: rgba(239, 68, 68, 0.38);
             border-color: #f87171;
             box-shadow: 0 0 14px rgba(239, 68, 68, 0.55);
+        }
+
+        .btn-pink {
+            background: linear-gradient(135deg, rgba(236, 72, 153, 0.22), rgba(244, 114, 182, 0.35));
+            border-color: rgba(244, 114, 182, 0.6);
+            color: #fbcfe8;
+        }
+
+        .btn-pink:hover {
+            background: linear-gradient(135deg, rgba(236, 72, 153, 0.42), rgba(244, 114, 182, 0.60));
+            border-color: #f472b6;
+            box-shadow: 0 0 16px rgba(244, 114, 182, 0.55);
+            color: #fff;
         }
 
         .control-btn:active {
@@ -589,8 +607,8 @@
 
     <div id="loader">
         <div class="spinner"></div>
-        <div class="loading-title" id="loading-title">正在启动宇宙武器粒子引擎...</div>
-        <div class="loading-desc" id="loading-desc">已载入神剑与粒子手枪拓扑模型，请授权摄像头</div>
+        <div class="loading-title" id="loading-title">正在启动 72,000 粒子宇宙引擎...</div>
+        <div class="loading-desc" id="loading-desc">已载入极光女神、神剑与手枪拓扑模型，请授权摄像头</div>
     </div>
 
     <div id="canvas-container"></div>
@@ -605,7 +623,7 @@
             <div class="mock-icon" title="分享遮挡区">↗️</div>
         </div>
         <div class="safe-bottom-text" id="safe-bottom-text">
-            ⚠️ 手机短视频底部字幕与话题遮挡区 (已自动为神剑/手枪腾出上方黄金视区)
+            ⚠️ 手机短视频底部字幕与话题遮挡区 (已自动为神剑/手枪/女神腾出上方黄金视区)
         </div>
     </div>
 
@@ -617,7 +635,7 @@
     <div id="hud-top">
         <div class="hud-status-dot" id="status-dot"></div>
         <div class="hud-text" id="status-text">双手 AI 视觉感应就绪...</div>
-        <div class="hud-fps" id="fps-display">60 FPS (36,000 粒子)</div>
+        <div class="hud-fps" id="fps-display">60 FPS (72,000 粒子)</div>
     </div>
 
     <!-- 实时手势徽章 -->
@@ -637,7 +655,7 @@
 
     <!-- 交互提示 -->
     <div id="hint-overlay">
-        🔫 <span class="gun-color">拇指+食指(手枪手势)</span>：<b>粒子能量手枪(扣扳机开火)</b> ｜ 🗡️ <span class="sword-color">食指+中指(剑诀)</span>：<b>万剑归宗神剑</b> ｜ 🖐️ <b>张手掌</b>(斥力盾)
+        🔫 <span class="gun-color">手枪姿势</span>：<b>能量手枪</b> ｜ 🗡️ <span class="sword-color">两指剑诀</span>：<b>神剑归宗</b> ｜ 💃 <span class="girl-color">极光女神</span>：<b>唯美祈愿</b> ｜ 🖐️ <b>张掌</b>(斥力盾)
     </div>
 
     <!-- 画中画 -->
@@ -657,7 +675,8 @@
         <button class="control-btn" id="btn-theme">🎨 切换星系色彩</button>
         <button class="control-btn btn-red" id="btn-demo-gun">🔫 能量手枪 (点击开火)</button>
         <button class="control-btn btn-gold" id="btn-demo-sword">🗡️ 两指剑诀 (万剑归宗)</button>
-        <button class="control-btn" id="btn-demo-shield">🖐️ 时空斥力盾</button>
+        <button class="control-btn btn-pink" id="btn-demo-girl">💃 极光女神</button>
+        <button class="control-btn btn-demo" id="btn-demo-shield">🖐️ 时空斥力盾</button>
         <button class="control-btn" id="btn-demo-clap">👏 击掌激波</button>
         <button class="control-btn" id="btn-burst">💥 超新星</button>
         <button class="control-btn" id="btn-pip">📷 画中画</button>
@@ -677,9 +696,9 @@
                 code: 'zh',
                 name: '中文',
                 nextLang: 'en',
-                title: '双手交互星空粒子 - 粒子神剑与能量手枪全能版',
-                loadingTitle: '正在启动宇宙武器粒子引擎...',
-                loadingDesc: '已载入神剑与粒子手枪拓扑模型，请授权摄像头',
+                title: '双手交互星空粒子 - 极光女神·神剑·手枪 72,000粒子全能版',
+                loadingTitle: '正在启动 72,000 粒子宇宙引擎...',
+                loadingDesc: '已载入极光女神、神剑与手枪拓扑模型，请授权摄像头',
                 hudReady: '双手 AI 视觉感应就绪...',
                 hudStandbyL: '手部 1: 等待感应',
                 hudStandbyR: '手部 2: 等待感应',
@@ -689,7 +708,7 @@
                 handCurrent: '当前手',
                 particles: '粒子',
                 clapShockwave: '👏 击掌时空激波',
-                hintOverlay: '🔫 <span class="gun-color">拇指+食指(手枪手势)</span>：<b>粒子能量手枪(扣扳机开火)</b> ｜ 🗡️ <span class="sword-color">食指+中指(剑诀)</span>：<b>万剑归宗神剑</b> ｜ 🖐️ <b>张手掌</b>(斥力盾)',
+                hintOverlay: '🔫 <span class="gun-color">手枪姿势</span>：<b>能量手枪</b> ｜ 🗡️ <span class="sword-color">两指剑诀</span>：<b>神剑归宗</b> ｜ 💃 <span class="girl-color">极光女神</span>：<b>唯美祈愿</b> ｜ 🖐️ <b>张掌</b>(斥力盾)',
                 pipTitle: '👐 AI 视觉感知监控',
                 pipExpand: '⤢ 放大',
                 pipCollapse: '⤡ 还原',
@@ -699,6 +718,7 @@
                 btnTheme: '🎨 切换星系色彩',
                 btnGun: '🔫 能量手枪 (点击开火)',
                 btnSword: '🗡️ 两指剑诀 (万剑归宗)',
+                btnGirl: '💃 极光女神 (唯美雕塑)',
                 btnShield: '🖐️ 时空斥力盾',
                 btnClap: '👏 击掌激波',
                 btnBurst: '💥 超新星',
@@ -713,18 +733,20 @@
                 cleanModeToastOff: '🖥️ 已退出纯净模式',
                 safeWatermark: '🛡️ 短视频安全防遮挡区',
                 mockAvatar: '头像',
-                safeBottomText: '⚠️ 手机短视频底部字幕与话题遮挡区 (已自动为神剑/手枪腾出上方黄金视区)',
+                safeBottomText: '⚠️ 手机短视频底部字幕与话题遮挡区 (已自动为神剑/手枪/女神腾出上方黄金视区)',
                 gestures: {
                     PINCH: '🤏 引力黑洞',
                     POINTER: '👉 单指画星轨',
                     SWORD: '🗡️ 2指剑诀(神剑)',
                     GUN: '🔫 能量手枪(瞄准)',
+                    GIRL: '💃 极光女神(祈愿)',
                     REPULSOR: '🖐️ 掌心斥力盾',
                     FIST: '✊ 凝聚蓄力',
                     IDLE: '✋ 自然巡航'
                 },
                 statusGunReady: '🔫 能量手枪已激活！再次点击按钮或屏幕任意位置即可开火！',
-                statusSwordReady: '🗡️ 2指剑诀已激活！36,000 颗星尘粒子凝聚成神剑！',
+                statusSwordReady: '🗡️ 2指剑诀已激活！72,000 颗星尘粒子凝聚成神剑！',
+                statusGirlReady: '💃 极光女神已唤醒！72,000 颗星尘粒子凝聚为唯美女性雕塑，轻纱微风飘逸！',
                 statusSwordIdle: '✨ 粒子解体，繁星散落...',
                 statusShieldReady: '🖐️ 掌心时空斥力盾已激活！',
                 statusClapReady: '👏 击掌时空激波已引爆！环形能量震荡全屏！',
@@ -735,9 +757,9 @@
                 code: 'en',
                 name: 'English',
                 nextLang: 'ko',
-                title: 'Gesture Particle Universe - Blaster & Dual-Blade Edition',
-                loadingTitle: 'Initializing Cosmic Weapon Particle Engine...',
-                loadingDesc: 'Loaded energy cannon & dual-blade topology. Please allow camera.',
+                title: 'Gesture Particle Universe - Aurora Goddess & Weapons 72k Edition',
+                loadingTitle: 'Initializing 72,000 Particles Cosmic Engine...',
+                loadingDesc: 'Loaded Aurora Goddess, dual-blade & blaster topology. Please allow camera.',
                 hudReady: 'Dual-hand AI vision sensor ready...',
                 hudStandbyL: 'Hand 1: Standby',
                 hudStandbyR: 'Hand 2: Standby',
@@ -747,7 +769,7 @@
                 handCurrent: 'Active Hand',
                 particles: 'particles',
                 clapShockwave: '👏 Cosmic Clap Wave',
-                hintOverlay: '🔫 <span class="gun-color">Thumb+Index (Finger Gun)</span>: <b>Plasma Blaster (Fire)</b> ｜ 🗡️ <span class="sword-color">Index+Middle (Sword Dance)</span>: <b>Dual-Blade Cannon</b> ｜ 🖐️ <b>Open Palm</b> (Repulsor)',
+                hintOverlay: '🔫 <span class="gun-color">Finger Gun</span>: <b>Plasma Blaster</b> ｜ 🗡️ <span class="sword-color">Sword Dance</span>: <b>Dual-Blade</b> ｜ 💃 <span class="girl-color">Aurora Goddess</span>: <b>Celestial Maiden</b> ｜ 🖐️ <b>Open Palm</b>',
                 pipTitle: '👐 AI Vision Sensor',
                 pipExpand: '⤢ Expand',
                 pipCollapse: '⤡ Reset',
@@ -757,6 +779,7 @@
                 btnTheme: '🎨 Galaxy Themes',
                 btnGun: '🔫 Plasma Blaster (Fire)',
                 btnSword: '🗡️ Dual-Blade (Sword Dance)',
+                btnGirl: '💃 Aurora Goddess',
                 btnShield: '🖐️ Repulsor Shield',
                 btnClap: '👏 Cosmic Clap',
                 btnBurst: '💥 Supernova',
@@ -771,18 +794,20 @@
                 cleanModeToastOff: '🖥️ Exited clean mode',
                 safeWatermark: '🛡️ Short Video Safe Zone',
                 mockAvatar: 'Profile',
-                safeBottomText: '⚠️ Mobile UI overlay zone (Weapons elevated to golden visual focus)',
+                safeBottomText: '⚠️ Mobile UI overlay zone (Weapons & Goddess elevated to golden visual focus)',
                 gestures: {
                     PINCH: '🤏 Gravity Hole',
                     POINTER: '👉 Cosmic Beam',
                     SWORD: '🗡️ Dual-Blade',
                     GUN: '🔫 Plasma Cannon',
+                    GIRL: '💃 Aurora Goddess',
                     REPULSOR: '🖐️ Repulsor Shield',
                     FIST: '✊ Energy Charge',
                     IDLE: '✋ Free Roam'
                 },
                 statusGunReady: '🔫 Plasma Blaster active! Click anywhere to unleash laser fire!',
-                statusSwordReady: '🗡️ Dual-Blade active! 36,000 cosmic particles forged into blade!',
+                statusSwordReady: '🗡️ Dual-Blade active! 72,000 cosmic particles forged into blade!',
+                statusGirlReady: '💃 Aurora Goddess awakened! 72,000 stellar particles forged into celestial maiden with flowing gown!',
                 statusSwordIdle: '✨ Plasma dissipated into cosmic dust...',
                 statusShieldReady: '🖐️ Repulsor shield activated! Repelling stellar particles!',
                 statusClapReady: '👏 Cosmic clap shockwave unleashed! Ring ripples pulsing across cosmos!',
@@ -793,9 +818,9 @@
                 code: 'ko',
                 name: '한국어',
                 nextLang: 'zh',
-                title: '양손 제스처 우주 입자 - 플라즈마 블래스터 & 비검결 전능판',
-                loadingTitle: '우주 무기 입자 엔진 시동 중...',
-                loadingDesc: '플라즈마 블래스터 및 비검결 토폴로지 로드 완료. 카메라 접근을 허용해주세요.',
+                title: '양손 제스처 우주 입자 - 오로라 여신·비검결·블래스터 72,000 입자 전능판',
+                loadingTitle: '72,000 입자 우주 엔진 시동 중...',
+                loadingDesc: '오로라 여신, 플라즈마 블래스터 및 비검결 토폴로지 로드 완료. 카메라 접근을 허용해주세요.',
                 hudReady: '양손 AI 비전 센서 감지 준비 완료...',
                 hudStandbyL: '손 1: 대기 중',
                 hudStandbyR: '손 2: 대기 중',
@@ -805,7 +830,7 @@
                 handCurrent: '현재 손',
                 particles: '입자',
                 clapShockwave: '👏 박수 시공간 충격파',
-                hintOverlay: '🔫 <span class="gun-color">엄지+검지 (권총 제스처)</span>: <b>플라즈마 블래스터 (방아쇠 발사)</b> ｜ 🗡️ <span class="sword-color">검지+중지 (비검결)</span>: <b>만검귀종 플라즈마 검</b> ｜ 🖐️ <b>손바닥</b> (척력 방패)',
+                hintOverlay: '🔫 <span class="gun-color">권총 제스처</span>: <b>플라즈마 블래스터</b> ｜ 🗡️ <span class="sword-color">비검결</span>: <b>만검귀종</b> ｜ 💃 <span class="girl-color">오로라 여신</span>: <b>우아한 여신상</b> ｜ 🖐️ <b>손바닥</b>',
                 pipTitle: '👐 AI 비전 센서 모니터링',
                 pipExpand: '⤢ 확대',
                 pipCollapse: '⤡ 복원',
@@ -815,6 +840,7 @@
                 btnTheme: '🎨 은하 색상 전환',
                 btnGun: '🔫 플라즈마 블래스터 (발사)',
                 btnSword: '🗡️ 비검결 (만검귀종)',
+                btnGirl: '💃 오로라 여신',
                 btnShield: '🖐️ 반중력 척력 방패',
                 btnClap: '👏 박수 충격파',
                 btnBurst: '💥 초신성 폭발',
@@ -835,12 +861,14 @@
                     POINTER: '👉 성운 광선',
                     SWORD: '🗡️ 비검결(신검)',
                     GUN: '🔫 플라즈마포',
+                    GIRL: '💃 오로라 여신',
                     REPULSOR: '🖐️ 척력 방패',
                     FIST: '✊ 기 충전',
                     IDLE: '✋ 자유 비행'
                 },
                 statusGunReady: '🔫 플라즈마 블래스터 활성화! 화면을 클릭하여 레이저 탄환을 발사하세요!',
-                statusSwordReady: '🗡️ 비검결 활성화! 36,000개의 성운 입자가 검으로 응집되었습니다!',
+                statusSwordReady: '🗡️ 비검결 활성화! 72,000개의 성운 입자가 검으로 응집되었습니다!',
+                statusGirlReady: '💃 오로라 여신 강림! 72,000개의 성운 입자가 우아한 여신 조각으로 응집되었습니다!',
                 statusSwordIdle: '✨ 입자가 해체되며 별빛으로 흩어집니다...',
                 statusShieldReady: '🖐️ 반중력 척력 방패 활성화!',
                 statusClapReady: '👏 박수 시공간 충격파 폭발! 링 형태의 에너지가 화면 전체로 전파됩니다!',
@@ -879,6 +907,7 @@
                 'btn-theme': dict.btnTheme,
                 'btn-demo-gun': dict.btnGun,
                 'btn-demo-sword': dict.btnSword,
+                'btn-demo-girl': dict.btnGirl,
                 'btn-demo-shield': dict.btnShield,
                 'btn-demo-clap': dict.btnClap,
                 'btn-burst': dict.btnBurst,
@@ -946,9 +975,9 @@
         }
 
         // ==========================================
-        // 1. 全局配置：36,000 颗高精粒子 & 双手状态
+        // 1. 全局配置：72,000 颗高精粒子 & 双手状态
         // ==========================================
-        const PARTICLE_COUNT = 36000;
+        const PARTICLE_COUNT = 72000;
 
         const GESTURES = {
             IDLE: 'IDLE',         // 自然巡航
@@ -956,6 +985,7 @@
             POINTER: 'POINTER',   // 单食指（流星光剑喷流）
             SWORD: 'SWORD',       // ✌️ 双指剑诀（食指+中指·万剑归宗）
             GUN: 'GUN',           // 🔫 拇指+食指（手枪姿势·能量手枪）
+            GIRL: 'GIRL',         // 💃 极光女神（唯美祈愿雕塑）
             REPULSOR: 'REPULSOR', // 掌心斥力盾（反引力推开）
             FIST: 'FIST'          // 握拳蓄力
         };
@@ -1015,6 +1045,7 @@
             targetPos: new THREE.Vector3(),
             smoothPos: new THREE.Vector3(),
             wristWorld: new THREE.Vector3(),
+            thumbTipWorld: new THREE.Vector3(),
             indexTipWorld: new THREE.Vector3(),
             middleTipWorld: new THREE.Vector3(),
             swordTipsMidWorld: new THREE.Vector3(),
@@ -1023,12 +1054,12 @@
 
         let themeIndex = 0;
         let mockGestureActive = false;
-        let currentWeapon = 'NONE'; // 'NONE' | 'SWORD' | 'GUN'
+        let currentWeapon = 'NONE'; // 'NONE' | 'SWORD' | 'GUN' | 'GIRL'
         let weaponProgress = 0.0;
         let recoilTime = 0.0; // 后坐力动画时间
 
         // ==========================================
-        // 2. 多阶高饱和丰富色彩矩阵（4款大系）
+        // 2. 多阶高饱和丰富色彩矩阵（8款宏大星系主题）
         // ==========================================
         const THEMES = [
             {
@@ -1075,6 +1106,50 @@
                     { pos: 0.86, color: 0xec4899 },
                     { pos: 1.00, color: 0xa855f7 }
                 ]
+            },
+            {
+                name: '樱花洛丽塔 (甜心粉·纯净白·幻彩金·樱花流光)',
+                stops: [
+                    { pos: 0.00, color: 0xffffff },
+                    { pos: 0.18, color: 0xfbcfe8 },
+                    { pos: 0.38, color: 0xf472b6 },
+                    { pos: 0.62, color: 0xfb7185 },
+                    { pos: 0.82, color: 0xfde047 },
+                    { pos: 1.00, color: 0xe879f9 }
+                ]
+            },
+            {
+                name: '深海琉璃幻影 (钴蓝·绿松石·荧光青·冰川白)',
+                stops: [
+                    { pos: 0.00, color: 0xffffff },
+                    { pos: 0.15, color: 0xa5f3fc },
+                    { pos: 0.36, color: 0x06b6d4 },
+                    { pos: 0.65, color: 0x0284c7 },
+                    { pos: 0.85, color: 0x1d4ed8 },
+                    { pos: 1.00, color: 0x2dd4bf }
+                ]
+            },
+            {
+                name: '暗夜黑金流火 (耀金·香槟金·烈焰橙·暗黑玄武)',
+                stops: [
+                    { pos: 0.00, color: 0xffffff },
+                    { pos: 0.20, color: 0xfef08a },
+                    { pos: 0.45, color: 0xf59e0b },
+                    { pos: 0.70, color: 0xd97706 },
+                    { pos: 0.88, color: 0xb45309 },
+                    { pos: 1.00, color: 0x78350f }
+                ]
+            },
+            {
+                name: '马卡龙暮云霞光 (薄荷绿·奶油黄·薰衣草紫·蜜桃粉)',
+                stops: [
+                    { pos: 0.00, color: 0xffffff },
+                    { pos: 0.18, color: 0x6ee7b7 },
+                    { pos: 0.38, color: 0xfde047 },
+                    { pos: 0.60, color: 0xf472b6 },
+                    { pos: 0.82, color: 0xc084fc },
+                    { pos: 1.00, color: 0x93c5fd }
+                ]
             }
         ];
 
@@ -1094,13 +1169,16 @@
         }
 
         // ==========================================
-        // 3. 武器几何拓扑预计算 (神剑 & 能量手枪)
+        // 3. 几何拓扑预计算 (神剑 & 能量手枪 & 极光女神)
         // ==========================================
         const swordLocalOffsets = new Float32Array(PARTICLE_COUNT * 3);
         const swordParticleTypes = new Uint8Array(PARTICLE_COUNT);
 
         const gunLocalOffsets = new Float32Array(PARTICLE_COUNT * 3);
-        const gunParticleTypes = new Uint8Array(PARTICLE_COUNT); // 0:枪管, 1:枪口聚焦环, 2:机匣与核心, 3:握把, 4:击锤准星
+        const gunParticleTypes = new Uint8Array(PARTICLE_COUNT); // 0:套筒, 1:枪管, 2:扳机与护圈, 3:握把底托, 4:准星, 5:击锤
+
+        const girlLocalOffsets = new Float32Array(PARTICLE_COUNT * 3);
+        const girlParticleTypes = new Uint8Array(PARTICLE_COUNT); // 0:王冠面容, 1:飘逸长发, 2:身姿胸腰, 3:祈愿手臂, 4:星光裙摆, 5:足尖星尘旋涡
 
         function initTemplates() {
             // 3.1 神剑拓扑
@@ -1271,6 +1349,162 @@
                 gunLocalOffsets[i3 + 1] = gv;
                 gunLocalOffsets[i3 + 2] = gw;
                 gunParticleTypes[i] = gtype;
+            }
+
+            // 3.3 极光女神唯美 3D 雕塑拓扑 (Celestial Aurora Goddess - 72,000 高精粒子艺术塑形)
+            // 垂直总高 295px，包含：
+            // 0: 星光王冠与唯美面容 (Head & Crown)
+            // 1: 飘逸长发与微风发丝 (Flowing Hair)
+            // 2: 天鹅颈与玲珑身姿 (Neck, Torso & Waist)
+            // 3: 祈愿起舞双臂与纤手 (Graceful Arms & Hands)
+            // 4: 螺旋层叠星光晚礼裙摆 (Layered Petal Ballgown)
+            // 5: 悬浮星尘旋涡与足尖 (Feet & Nebula Vortex)
+            for (let i = 0; i < PARTICLE_COUNT; i++) {
+                const i3 = i * 3;
+                let lu = 0, lv = 0, lw = 0;
+                let ltype = 0;
+
+                if (i < PARTICLE_COUNT * 0.11) {
+                    // 0. 星光王冠与头部 (约 7,920 颗粒子)
+                    ltype = 0;
+                    if (Math.random() < 0.62) {
+                        // 0.1 唯美头颅与面容轮廓 (u: 98 ~ 122)
+                        const prog = Math.random();
+                        lu = 98 + prog * 24;
+                        const normU = (lu - 110) / 12.0;
+                        const rHead = 9.5 * Math.sqrt(Math.max(0, 1.0 - normU * normU));
+                        const theta = Math.random() * Math.PI * 2;
+                        const phi = (Math.random() - 0.5) * Math.PI;
+                        lv = rHead * Math.cos(phi) * Math.sin(theta) * 0.88;
+                        lw = rHead * Math.cos(phi) * Math.cos(theta) * 0.95;
+                    } else {
+                        // 0.2 浮空星光王冠 (u: 122 ~ 144)
+                        const prog = Math.random();
+                        lu = 122 + prog * 22;
+                        const crownProng = Math.floor(Math.random() * 5); // 5 支星芒冠尖
+                        const baseAngle = crownProng * ((Math.PI * 2) / 5);
+                        const angle = baseAngle + (Math.random() - 0.5) * 0.35;
+                        const rCrown = 13.5 * (1.0 - prog * 0.42);
+                        lv = rCrown * Math.sin(angle);
+                        lw = rCrown * Math.cos(angle);
+                    }
+
+                } else if (i < PARTICLE_COUNT * 0.32) {
+                    // 1. 飘逸长发与微风流光发丝 (约 15,120 颗粒子)
+                    ltype = 1;
+                    const prog = Math.random(); // 0(发顶) ~ 1(发尾)
+                    lu = 120 - prog * 96; // u: 120 ~ 24 (飘垂至腰际与裙摆上方)
+                    // 向后侧与两旁自然披散
+                    const spreadV = (11.0 + prog * 28.0) * (Math.random() > 0.5 ? 1 : -1) * (0.35 + Math.random() * 0.65);
+                    const spreadW = -4.0 - prog * 20.0 - Math.random() * 9.0; // 背后为主
+                    // 发丝自然波浪曲线
+                    const waveV = Math.sin(lu * 0.11 + prog * 6.28) * 4.2;
+                    const waveW = Math.cos(lu * 0.08 + prog * 4.0) * 3.5;
+                    lv = spreadV + waveV;
+                    lw = spreadW + waveW;
+
+                } else if (i < PARTICLE_COUNT * 0.48) {
+                    // 2. 天鹅颈与玲珑身段曲线 (约 11,520 颗粒子)
+                    ltype = 2;
+                    const sub = Math.random();
+                    if (sub < 0.22) {
+                        // 2.1 天鹅颈 (u: 86 ~ 98)
+                        lu = 86 + Math.random() * 12;
+                        const theta = Math.random() * Math.PI * 2;
+                        const rNeck = 4.4 + Math.random() * 1.0;
+                        lv = rNeck * Math.sin(theta);
+                        lw = rNeck * Math.cos(theta);
+                    } else if (sub < 0.45) {
+                        // 2.2 优雅香肩与锁骨 (u: 74 ~ 86)
+                        lu = 74 + Math.random() * 12;
+                        const shoulderSide = (Math.random() - 0.5) * 2;
+                        lv = shoulderSide * (26.0 - (lu - 74) * 0.8);
+                        lw = (Math.random() - 0.5) * 8.5;
+                    } else {
+                        // 2.3 玲珑胸部与纤细蜂腰 (u: 34 ~ 74)
+                        lu = 34 + Math.random() * 40;
+                        let rBody = 8.5;
+                        if (lu > 58) {
+                            // 胸部挺拔外展
+                            const bustProg = (lu - 58) / 16.0;
+                            rBody = 8.5 + Math.sin(bustProg * Math.PI) * 5.8;
+                        } else if (lu > 44) {
+                            // 极细蜂腰 (u: 44 处最纤细)
+                            const waistProg = (lu - 44) / 14.0;
+                            rBody = 7.8 + Math.pow(waistProg, 2.0) * 2.2;
+                        } else {
+                            // 臀部初展向裙摆过渡 (u: 34 ~ 44)
+                            const hipProg = (44 - lu) / 10.0;
+                            rBody = 7.8 + hipProg * 8.5;
+                        }
+                        const theta = Math.random() * Math.PI * 2;
+                        lv = rBody * Math.sin(theta);
+                        // 前挺后翘椭圆身段
+                        lw = rBody * Math.cos(theta) * (Math.sin(theta) > 0 ? 1.15 : 0.95);
+                    }
+
+                } else if (i < PARTICLE_COUNT * 0.61) {
+                    // 3. 祈愿起舞双臂与纤纤玉手 (约 9,360 颗粒子)
+                    ltype = 3;
+                    const armSide = Math.random() > 0.5 ? 1 : -1;
+                    const t = Math.random(); // 0(肩) -> 0.5(肘) -> 1(祈愿指尖)
+                    let pU, pV, pW;
+                    if (t < 0.5) {
+                        // 上臂 (肩 -> 肘)
+                        const seg = t / 0.5;
+                        pU = 80 - seg * 18;
+                        pV = armSide * (26.0 + Math.sin(seg * Math.PI) * 7.0);
+                        pW = seg * 12.0;
+                    } else {
+                        // 前臂 (肘 -> 胸前祈愿合十手势)
+                        const seg = (t - 0.5) / 0.5;
+                        pU = 62 + seg * 14;
+                        pV = armSide * (26.0 * (1.0 - seg) + 4.5 * seg);
+                        pW = 12.0 + seg * 12.0;
+                    }
+                    const armThick = 2.4 * (1.0 - t * 0.35);
+                    const theta = Math.random() * Math.PI * 2;
+                    lv = pV + armThick * Math.cos(theta);
+                    lu = pU + armThick * Math.sin(theta) * 0.6;
+                    lw = pW + (Math.random() - 0.5) * armThick;
+
+                } else if (i < PARTICLE_COUNT * 0.89) {
+                    // 4. 螺旋层叠星光晚礼裙摆 (约 20,160 颗粒子)
+                    ltype = 4;
+                    const prog = Math.random(); // 0(腰际) -> 1(裙底大伞摆)
+                    lu = 34 - prog * 168; // u: 34 ~ -134
+                    // 伞裙半径大幅展开 (从 16 到 96)
+                    const rBase = 15.0 + Math.pow(prog, 1.28) * 82.0;
+                    const theta = Math.random() * Math.PI * 2;
+                    // 5 瓣星光褶皱花瓣波浪
+                    const petalWave = 1.0 + 0.16 * Math.sin(5.0 * theta + lu * 0.05);
+                    const rFinal = rBase * petalWave + (Math.random() - 0.5) * 3.5;
+                    lv = rFinal * Math.sin(theta);
+                    lw = rFinal * Math.cos(theta) * 0.92; // 优雅前后修身
+
+                } else {
+                    // 5. 悬浮星尘旋涡与优雅足尖 (约 7,920 颗粒子)
+                    ltype = 5;
+                    if (Math.random() < 0.28) {
+                        // 5.1 裙下足尖 (u: -145 ~ -134)
+                        lu = -134 - Math.random() * 11;
+                        const footSide = Math.random() > 0.5 ? 1 : -1;
+                        lv = footSide * (4.5 + Math.random() * 3.0);
+                        lw = (Math.random() - 0.5) * 6.5;
+                    } else {
+                        // 5.2 托底阿基米德旋涡与悬浮光环 (u: -155 ~ -126)
+                        lu = -132 - Math.random() * 22;
+                        const rVortex = 18.0 + Math.pow(Math.random(), 0.85) * 105.0;
+                        const theta = rVortex * 0.09 + Math.random() * 0.4;
+                        lv = rVortex * Math.cos(theta);
+                        lw = rVortex * Math.sin(theta);
+                    }
+                }
+
+                girlLocalOffsets[i3] = lu;
+                girlLocalOffsets[i3 + 1] = lv;
+                girlLocalOffsets[i3 + 2] = lw;
+                girlParticleTypes[i] = ltype;
             }
         }
 
@@ -1521,7 +1755,7 @@
             clapBadge.style.animation = 'pulse-dot 0.3s 3';
             setTimeout(() => { clapBadge.style.display = 'none'; }, 1800);
 
-            updateStatus('👏 击掌引爆时空激波！36,000 粒子剧烈震荡共振！', '#facc15');
+            updateStatus('👏 击掌引爆时空激波！72,000 粒子剧烈震荡共振！', '#facc15');
         }
 
         function triggerSupernova(origin) {
@@ -1580,7 +1814,7 @@
             HANDS[1].smoothPos.lerp(HANDS[1].targetPos, 0.22);
             MOUSE.smoothPos.lerp(MOUSE.targetPos, 0.25);
 
-            // 1. 寻找当前激活的武器持有者 (优先手枪 GUN，其次神剑 SWORD)
+            // 1. 寻找当前激活的形态持有者 (优先手枪 GUN，其次神剑 SWORD，再次女神 GIRL)
             let weaponHolder = null;
             let targetWeaponType = 'NONE';
 
@@ -1593,6 +1827,10 @@
                 } else if (h.gesture === GESTURES.SWORD) {
                     weaponHolder = h;
                     targetWeaponType = 'SWORD';
+                    break;
+                } else if (h.gesture === GESTURES.GIRL) {
+                    weaponHolder = h;
+                    targetWeaponType = 'GIRL';
                     break;
                 }
             }
@@ -1642,6 +1880,12 @@
                         weaponDirV.negate();
                     }
                     weaponDirW.crossVectors(weaponDirU, weaponDirV).normalize();
+                } else if (currentWeapon === 'GIRL') {
+                    // 💃 极光女神雕塑：垂直挺拔立正，主轴指向天空，左右轴优雅微速自转
+                    weaponDirU.set(0, 1, 0);
+                    const girlSpinAngle = now * 0.00038;
+                    weaponDirV.set(Math.cos(girlSpinAngle), 0, Math.sin(girlSpinAngle)).normalize();
+                    weaponDirW.crossVectors(weaponDirU, weaponDirV).normalize();
                 } else {
                     // 🗡️ 神剑方向基准
                     weaponDirV.set(-weaponDirU.y, weaponDirU.x, 0).normalize();
@@ -1671,6 +1915,14 @@
                     core.mesh.scale.lerp(new THREE.Vector3(1.6, 1.6, 1.6), 0.2);
                     core.flareMat.opacity = THREE.MathUtils.lerp(core.flareMat.opacity, 1.0, 0.25);
                     core.flare.scale.lerp(new THREE.Vector3(3.4, 3.4, 3.4), 0.2);
+                } else if (hand.gesture === GESTURES.GIRL) {
+                    core.mat.opacity = THREE.MathUtils.lerp(core.mat.opacity, 0.95, 0.25);
+                    core.mesh.scale.lerp(new THREE.Vector3(1.4, 1.4, 1.4), 0.2);
+                    core.ringMat.opacity = THREE.MathUtils.lerp(core.ringMat.opacity, 0.9, 0.2);
+                    core.ring.scale.lerp(new THREE.Vector3(2.8, 2.8, 2.8), 0.2);
+                    core.ring.rotation.z += 0.03;
+                    core.flareMat.opacity = THREE.MathUtils.lerp(core.flareMat.opacity, 1.0, 0.25);
+                    core.flare.scale.lerp(new THREE.Vector3(3.0, 3.0, 3.0), 0.2);
                 } else if (hand.gesture === GESTURES.PINCH) {
                     core.mat.opacity = THREE.MathUtils.lerp(core.mat.opacity, 0.9, 0.2);
                     core.mesh.scale.lerp(new THREE.Vector3(1.8, 1.8, 1.8), 0.2);
@@ -1748,7 +2000,7 @@
             const colAttr = geometry.attributes.color.array;
             const timeNowSec = now * 0.001;
 
-            // 36,000 粒子力场更新
+            // 72,000 粒子力场更新
             for (let i = 0; i < PARTICLE_COUNT; i++) {
                 const i3 = i * 3;
                 let px = posAttr[i3], py = posAttr[i3 + 1], pz = posAttr[i3 + 2];
@@ -1847,6 +2099,72 @@
                             colAttr[i3] = 1.0; colAttr[i3 + 1] = 0.85; colAttr[i3 + 2] = 0.25;
                         } else {
                             colAttr[i3] = 0.22 + pulse * 0.6; colAttr[i3 + 1] = 0.75 + pulse * 0.25; colAttr[i3 + 2] = 1.0;
+                        }
+
+                    } else if (currentWeapon === 'GIRL') {
+                        // 💃【极光女神·唯美艺术雕塑形态】
+                        const lu = girlLocalOffsets[i3];
+                        const lv = girlLocalOffsets[i3 + 1];
+                        const lw = girlLocalOffsets[i3 + 2];
+                        const pType = girlParticleTypes[i];
+
+                        // 72,000 粒子立像平移与自转投影 (以 weaponOrigin 为中心立正站立)
+                        const tx = weaponOrigin.x + weaponDirV.x * lv + weaponDirW.x * lw;
+                        const ty = weaponOrigin.y + weaponDirU.y * lu;
+                        const tz = weaponOrigin.z + weaponDirV.z * lv + weaponDirW.z * lw;
+
+                        const dx = tx - px, dy = ty - py, dz = tz - pz;
+                        vx += dx * (0.28 * morphStrength);
+                        vy += dy * (0.28 * morphStrength);
+                        vz += dz * (0.28 * morphStrength);
+
+                        // 微风发丝与裙摆呼吸动力学
+                        if (pType === 1) {
+                            // 飘逸长发微风拂动波浪
+                            const hairBreeze = Math.sin(timeNowSec * 3.2 + lu * 0.08) * 1.5;
+                            vx += weaponDirV.x * hairBreeze * morphStrength;
+                            vz += weaponDirW.z * hairBreeze * morphStrength;
+                        } else if (pType === 4) {
+                            // 裙摆波浪轻微呼吸
+                            const skirtBreeze = Math.sin(timeNowSec * 2.2 + lu * 0.05 + lv * 0.04) * 0.8;
+                            vx += weaponDirV.x * skirtBreeze * morphStrength;
+                            vz += weaponDirW.z * skirtBreeze * morphStrength;
+                        } else if (pType === 5) {
+                            // 足底阿基米德星尘旋涡高速盘旋
+                            vx += (-weaponDirW.x * lv + weaponDirV.x * lw) * 0.04 * morphStrength;
+                            vz += (-weaponDirW.z * lv + weaponDirV.z * lw) * 0.04 * morphStrength;
+                        }
+
+                        vx *= (0.73 + (1.0 - morphStrength) * 0.18);
+                        vy *= (0.73 + (1.0 - morphStrength) * 0.18);
+                        vz *= (0.73 + (1.0 - morphStrength) * 0.18);
+
+                        // 唯美高阶分色矩阵 (王冠耀金、琉璃玉身、樱粉长发、华丽流光晚礼裙、星光旋涡)
+                        const girlPulse = Math.sin(timeNowSec * 5.0 + lu * 0.04) * 0.5 + 0.5;
+                        if (pType === 0) {
+                            // 0. 星光王冠与面容 (纯净耀金与星辉白)
+                            colAttr[i3] = 1.0; colAttr[i3 + 1] = 0.92 + girlPulse * 0.08; colAttr[i3 + 2] = 0.65;
+                        } else if (pType === 1) {
+                            // 1. 飘逸长发 (樱花流光渐变金粉)
+                            colAttr[i3] = 0.98; colAttr[i3 + 1] = 0.45 + girlPulse * 0.25; colAttr[i3 + 2] = 0.72;
+                        } else if (pType === 2) {
+                            // 2. 天鹅颈与玲珑身姿 (温润白玉珍珠微光)
+                            colAttr[i3] = 0.98; colAttr[i3 + 1] = 0.92; colAttr[i3 + 2] = 0.96;
+                        } else if (pType === 3) {
+                            // 3. 祈愿双臂与纤纤玉手 (星河水晶粉)
+                            colAttr[i3] = 0.95; colAttr[i3 + 1] = 0.68; colAttr[i3 + 2] = 0.88;
+                        } else if (pType === 4) {
+                            // 4. 晚礼裙摆 (深空星系渐变流光，从腰际到裙摆纵深色阶)
+                            const skirtProg = Math.max(0, Math.min(1, (34 - lu) / 168.0));
+                            // 腰部向裙底从亮粉过渡至星河紫与极光青
+                            colAttr[i3] = 0.85 - skirtProg * 0.5 + girlPulse * 0.15;
+                            colAttr[i3 + 1] = 0.35 + skirtProg * 0.45;
+                            colAttr[i3 + 2] = 0.95 + skirtProg * 0.05;
+                        } else {
+                            // 5. 悬浮星尘旋涡 (炽烈青蓝电光)
+                            colAttr[i3] = 0.22 + girlPulse * 0.3;
+                            colAttr[i3 + 1] = 0.82;
+                            colAttr[i3 + 2] = 1.0;
                         }
                     }
 
@@ -2289,7 +2607,7 @@
             if (anyGunActive) {
                 updateStatus('🔫 能量手枪已激活！食指瞄准，拇指下压(或点击鼠标/空格)极速开火！', '#f87171');
             } else if (anySwordActive) {
-                updateStatus('🗡️ 两指剑诀已激活！36,000 粒子凝聚成神剑，随指尖挥舞劈砍！', '#facc15');
+                updateStatus('🗡️ 两指剑诀已激活！72,000 粒子凝聚成神剑，随指尖挥舞劈砍！', '#facc15');
             } else if (HANDS[0].active && HANDS[1].active) {
                 if (HANDS[0].gesture === GESTURES.PINCH && HANDS[1].gesture === GESTURES.PINCH) {
                     updateStatus('🌌 双手双星引力吸积盘 (时空虫洞桥梁拉伸中)', '#38bdf8');
@@ -2341,7 +2659,14 @@
         // 8. 鼠标与快捷键交互
         // ==========================================
         window.addEventListener('mousemove', (e) => {
+            if (e.target && (e.target.closest('#bottom-controls') || e.target.closest('#camera-pip-box') || e.target.closest('#lang-switcher') || e.target.closest('button'))) {
+                return;
+            }
             if (!HANDS[0].active && !HANDS[1].active) {
+                const rect = renderer.domElement.getBoundingClientRect();
+                if (e.clientX < rect.left || e.clientX > rect.right || e.clientY < rect.top || e.clientY > rect.bottom) {
+                    return;
+                }
                 MOUSE.active = true;
                 screenToWorld3D(e.clientX, e.clientY, MOUSE.targetPos);
                 MOUSE.indexTipWorld.copy(MOUSE.targetPos).add(new THREE.Vector3(25, 20, 0));
@@ -2353,6 +2678,10 @@
         });
 
         window.addEventListener('mousedown', (e) => {
+            if (e.target && (e.target.closest('#bottom-controls') || e.target.closest('#camera-pip-box') || e.target.closest('#lang-switcher') || e.target.closest('button'))) {
+                return;
+            }
+
             // 如果手枪模式激活，点击直接开火！
             if (currentWeapon === 'GUN') {
                 const muzzleWorldPos = weaponOrigin.clone().addScaledVector(weaponDirU, 180).addScaledVector(weaponDirV, 16.5);
@@ -2363,7 +2692,7 @@
             if (!HANDS[0].active && !HANDS[1].active) {
                 MOUSE.active = true;
                 if (e.button === 0) {
-                    if (MOUSE.gesture !== GESTURES.SWORD && MOUSE.gesture !== GESTURES.GUN) {
+                    if (MOUSE.gesture !== GESTURES.SWORD && MOUSE.gesture !== GESTURES.GUN && MOUSE.gesture !== GESTURES.GIRL) {
                         MOUSE.gesture = GESTURES.PINCH;
                         updateStatus('✨ 鼠标模拟：引力黑洞吸附', '#38bdf8');
                     }
@@ -2377,6 +2706,10 @@
         window.addEventListener('contextmenu', (e) => e.preventDefault());
 
         window.addEventListener('mouseup', (e) => {
+            if (e.target && (e.target.closest('#bottom-controls') || e.target.closest('#camera-pip-box') || e.target.closest('#lang-switcher') || e.target.closest('button'))) {
+                return;
+            }
+
             if (!HANDS[0].active && !HANDS[1].active) {
                 if (MOUSE.gesture === GESTURES.PINCH && e.button === 0) {
                     triggerSupernova(MOUSE.smoothPos);
@@ -2384,7 +2717,7 @@
                 } else if (MOUSE.gesture === GESTURES.REPULSOR && e.button === 2) {
                     MOUSE.gesture = GESTURES.IDLE;
                 }
-                // 注意：SWORD 与 GUN 形态保持常驻，由再次点击对应按钮或按 S/G 键切换退出
+                // 注意：SWORD、GUN 与 GIRL 形态保持常驻，由再次点击对应按钮或按按键切换退出
             }
         });
 
@@ -2429,7 +2762,20 @@
                     MOUSE.targetPos.set(0, -60, 0);
                     MOUSE.smoothPos.set(0, -60, 0);
                     MOUSE.aimDirection.set(0.4, 0.9, 0).normalize();
-                    updateStatus('🗡️ 2指剑诀已激活！36,000 颗星尘粒子凝聚成神剑！', '#facc15');
+                    updateStatus('🗡️ 2指剑诀已激活！72,000 颗星尘粒子凝聚成神剑！', '#facc15');
+                }
+            } else if (e.key === '7' || e.key.toLowerCase() === 'b') {
+                // 7 或 B 键：切换极光女神唯美雕塑形态
+                if (MOUSE.gesture === GESTURES.GIRL) {
+                    MOUSE.gesture = GESTURES.IDLE;
+                    updateStatus('✨ 女神解体，繁星散落太空...', '#38bdf8');
+                } else {
+                    MOUSE.active = true;
+                    MOUSE.gesture = GESTURES.GIRL;
+                    MOUSE.targetPos.set(0, 18, 0);
+                    MOUSE.smoothPos.set(0, 18, 0);
+                    MOUSE.aimDirection.set(0, 1, 0).normalize();
+                    updateStatus(I18N[currentLang]?.statusGirlReady || '💃 极光女神已唤醒！72,000 颗星尘粒子凝聚为唯美女性雕塑！', '#f472b6');
                 }
             } else if (e.key === '1') {
                 MOUSE.active = true;
@@ -2723,6 +3069,27 @@
                 updateStatus(I18N[currentLang]?.statusSwordReady || '🗡️ 2指剑诀已激活！', '#facc15');
             }
         });
+
+        const btnDemoGirl = document.getElementById('btn-demo-girl');
+        if (btnDemoGirl) {
+            btnDemoGirl.addEventListener('click', () => {
+                if (MOUSE.gesture === GESTURES.GIRL) {
+                    MOUSE.gesture = GESTURES.IDLE;
+                    badgeRight.classList.remove('active-badge', 'badge-weapon-active');
+                    badgeRightText.textContent = I18N[currentLang]?.handWait || '手部: 待命';
+                    updateStatus(I18N[currentLang]?.statusSwordIdle || '✨ 粒子解体，繁星散落...', '#38bdf8');
+                } else {
+                    MOUSE.active = true;
+                    MOUSE.gesture = GESTURES.GIRL;
+                    MOUSE.targetPos.set(0, 18, 0);
+                    MOUSE.smoothPos.set(0, 18, 0);
+                    MOUSE.aimDirection.set(0, 1, 0).normalize();
+                    badgeRight.classList.add('active-badge', 'badge-weapon-active');
+                    badgeRightText.textContent = `${I18N[currentLang]?.handCurrent || '当前手'}: ${I18N[currentLang]?.gestures?.GIRL || '💃 极光女神'}`;
+                    updateStatus(I18N[currentLang]?.statusGirlReady || '💃 极光女神已唤醒！72,000 颗星尘粒子凝聚为唯美女性雕塑！', '#f472b6');
+                }
+            });
+        }
 
         document.getElementById('btn-demo-shield').addEventListener('click', () => {
             MOUSE.active = true;
