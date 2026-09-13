@@ -1938,6 +1938,7 @@
             girlGenesisTimer = 0.0;
             isGirlGenesisCompleted = false;
             girlDisplayAngle = 0.0;
+            isGirlAutoSpin = false;
             material.size = 2.4; // 恢复到星海粒子自然尺寸
 
             // 重置鼠标/键盘模拟触发
@@ -1973,6 +1974,7 @@
         const GIRL_GENESIS_DURATION = 2.8; // 黄金 2.8 秒电影级变身时长
         let isGirlGenesisCompleted = false;
         let girlDisplayAngle = 0.0;
+        let isGirlAutoSpin = false; // 默认关闭自转，人像端正挺拔立正，杜绝斜站！
 
         function animate() {
             requestAnimationFrame(animate);
@@ -2024,10 +2026,14 @@
                 // 漫威战甲形态初始化 2.8 秒电影级四阶段构筑状态
                 if (currentWeapon === 'GIRL') {
                     material.size = 2.1;
+                    material.blending = THREE.NormalBlending;
+                    material.needsUpdate = true;
                     girlGenesisTimer = 0.0;
                     isGirlGenesisCompleted = false;
                 } else {
                     material.size = 3.8;
+                    material.blending = THREE.AdditiveBlending;
+                    material.needsUpdate = true;
                     girlGenesisTimer = 0.0;
                     isGirlGenesisCompleted = false;
                 }
@@ -2051,15 +2057,18 @@
                     }
                 } else if (!isGirlGenesisCompleted) {
                     isGirlGenesisCompleted = true;
+                    window.isGirlGenesisCompleted = true;
                     updateStatus(I18N[currentLang]?.statusGirlReady || '💃 漫威战甲·裴艺珍完美呈现！(160,000 粒子极致写真)', '#f472b6');
                 }
             } else if (currentWeapon !== 'NONE') {
                 girlGenesisTimer = 0.0;
                 isGirlGenesisCompleted = false;
+                window.isGirlGenesisCompleted = false;
                 weaponProgress = THREE.MathUtils.lerp(weaponProgress, 1.0, 0.15);
             } else {
                 girlGenesisTimer = 0.0;
                 isGirlGenesisCompleted = false;
+                window.isGirlGenesisCompleted = false;
                 weaponProgress = THREE.MathUtils.lerp(weaponProgress, 0.0, 0.08);
             }
 
@@ -2095,13 +2104,22 @@
                     }
                     weaponDirW.crossVectors(weaponDirU, weaponDirV).normalize();
                 } else if (currentWeapon === 'GIRL') {
-                    // 💃 漫威战甲·裴艺珍：垂直挺拔立正，主轴指向天空，变身期面向正前方特写，变身后极度优雅 360° 自转
+                    // 💃 漫威战甲·裴艺珍：顶天立地、垂直挺拔立正！主轴指向天空 (0, 1, 0)，正面端正站立，杜绝侧斜站姿！
                     weaponDirU.set(0, 1, 0);
                     const genesisTau = girlGenesisTimer / GIRL_GENESIS_DURATION;
                     if (genesisTau < 1.0) {
-                        girlDisplayAngle = Math.sin(girlGenesisTimer * 1.8) * 0.05;
+                        // 变身期面向正前方特写，微幅呼吸律动 (±0.03 rad)
+                        girlDisplayAngle = Math.sin(girlGenesisTimer * 1.8) * 0.03;
+                    } else if (isGirlAutoSpin) {
+                        // 若用户按 T 键手动开启 360° 环绕自转
+                        girlDisplayAngle += dt * 0.30;
                     } else {
-                        girlDisplayAngle += dt * 0.32;
+                        // 默认：端正挺拔立正正对镜头 (girlDisplayAngle 稳定归零)！随鼠标/手部横向微幅灵动响应 (最大不超过 ±0.06 rad)，手移开平滑归零回正
+                        let targetAngle = 0.0;
+                        if (weaponHolder && weaponHolder.smoothPos) {
+                            targetAngle = Math.max(-0.06, Math.min(0.06, weaponHolder.smoothPos.x * 0.0006));
+                        }
+                        girlDisplayAngle = THREE.MathUtils.lerp(girlDisplayAngle, targetAngle, 0.06);
                     }
                     weaponDirV.set(Math.cos(girlDisplayAngle), 0, Math.sin(girlDisplayAngle)).normalize();
                     weaponDirW.crossVectors(weaponDirU, weaponDirV).normalize();
@@ -2357,89 +2375,127 @@
                         let localStrength = 1.0;
                         const genesisTau = girlGenesisTimer / GIRL_GENESIS_DURATION;
                         if (genesisTau < 1.0) {
-                            const localRaw = Math.max(0.0, Math.min(1.0, (genesisTau - tStart) / Math.max(0.001, (tEnd - tStart))));
-                            localStrength = localRaw * localRaw * (3.0 - 2.0 * localRaw);
+                            if (genesisTau < tStart) {
+                                localStrength = 0.0;
+                            } else {
+                                const localRaw = Math.min(1.0, (genesisTau - tStart) / Math.max(0.001, (tEnd - tStart)));
+                                localStrength = localRaw * localRaw * (3.0 - 2.0 * localRaw);
+                            }
                         }
 
-                        // 目标人体网格世界坐标 (以 weaponOrigin 为基准立正自转)
+                        // 目标人体网格世界坐标 (以 weaponOrigin 为基准立正)
                         const tx = weaponOrigin.x + weaponDirV.x * lv + weaponDirW.x * lw;
                         const ty = weaponOrigin.y + weaponDirU.y * lu;
                         const tz = weaponOrigin.z + weaponDirV.z * lv + weaponDirW.z * lw;
 
                         const dx = tx - px, dy = ty - py, dz = tz - pz;
 
-                        // 2. 聚拢向心引力 (随局部进度自微弱引力爆发为刚性锁定)
-                        const pullFactor = (0.05 + 0.26 * localStrength);
+                        // 2. 聚拢向心引力 (激活前温和向心引导，激活后爆发为刚性锁定)
+                        let pullFactor;
+                        if (genesisTau >= 1.0) {
+                            pullFactor = 0.42; // 变身完成：极强刚性收敛锁定
+                        } else if (localStrength > 0.0) {
+                            pullFactor = 0.12 + 0.28 * localStrength;
+                        } else {
+                            pullFactor = 0.08; // 尚未激活时保持温和引力，防止漂移走散
+                        }
                         vx += dx * pullFactor;
                         vy += dy * pullFactor;
                         vz += dz * pullFactor;
 
-                        // 3. 🌌 引力双螺旋星云轨道 (当粒子尚未就位时，围绕人体中轴线做华丽盘旋，绝不呆板直冲！)
-                        if (localStrength < 0.90) {
-                            const spiralAmp = (1.0 - localStrength) * 0.10;
-                            // 绕 Y 轴做切向旋入飞舞
+                        // 3. 🌌 旋入星云轨道 (仅在进入该部位激活窗口且尚未就位时生效，绝不在激活前无端冲散)
+                        if (genesisTau < 1.0 && localStrength > 0.05 && localStrength < 0.92) {
+                            const spiralAmp = (1.0 - localStrength) * 0.06;
+                            // 绕人体主轴做切向旋入飞舞
                             vx += -dz * spiralAmp;
                             vz += dx * spiralAmp;
-                            // 伴随微量升腾上升气流
-                            vy += (1.0 - localStrength) * 0.30;
+                            // 微幅温和气流
+                            vy += (1.0 - localStrength) * 0.04;
                         }
 
                         // 4. 现代微风与战甲高能等离子流体动力学 (就位后生效)
-                        if (localStrength > 0.75) {
+                        if (localStrength > 0.85) {
                             if (pType === 1) {
-                                // 飘逸黑发随微风轻拂飘逸
-                                const hairBreeze = Math.sin(timeNowSec * 3.6 + lu * 0.09 + lv * 0.05) * 1.5;
+                                // 飘逸黑发随微风轻拂飘逸 (振幅适中，保持发髻轮廓清晰)
+                                const hairBreeze = Math.sin(timeNowSec * 3.2 + lu * 0.08 + lv * 0.05) * 0.65;
                                 vx += weaponDirV.x * hairBreeze * localStrength;
                                 vz += weaponDirW.z * hairBreeze * localStrength;
                             } else if (pType === 6) {
                                 // 胸口发光方舟电弧反应堆与手腕能量微震 (等离子高频呼吸波澜)
-                                const reactorVibe = (Math.random() - 0.5) * 0.85;
+                                const reactorVibe = (Math.random() - 0.5) * 0.65;
                                 vx += weaponDirV.x * reactorVibe * localStrength;
                                 vy += weaponDirU.y * reactorVibe * localStrength;
                                 vz += weaponDirW.z * reactorVibe * localStrength;
                             } else if (pType === 5 && lu <= -98) {
                                 // 白金机械战靴高跟足尖微颤星晶
-                                const heelTwinkle = (Math.random() - 0.5) * 0.35;
+                                const heelTwinkle = (Math.random() - 0.5) * 0.25;
                                 vx += weaponDirV.x * heelTwinkle * localStrength;
                                 vz += weaponDirW.z * heelTwinkle * localStrength;
                             }
                         }
 
-                        // 5. 动态阻尼演算
-                        const dynamicDamp = 0.73 + (1.0 - localStrength) * 0.18;
+                        // 5. 动态阻尼演算 (变身完成后迅速稳定定格)
+                        let dynamicDamp;
+                        if (genesisTau >= 1.0) {
+                            dynamicDamp = 0.68; // 快速衰减多余震颤，稳如磐石
+                        } else {
+                            dynamicDamp = 0.76 + (1.0 - localStrength) * 0.14;
+                        }
                         vx *= dynamicDamp;
                         vy *= dynamicDamp;
                         vz *= dynamicDamp;
 
-                        // 6. 高保真写实与量子淬火显色 (由高能发光星尘向真实原画像素平滑冷却显影)
+                        // 6. 100% 高保真全动态范围原画真实色彩与量子淬火显色
                         if (isPeiyizhenLoaded) {
                             if (pType === 6) {
                                 // 胸口方舟反应堆与手腕电弧：高频呼吸脉冲与耀眼苍蓝等离子极光
                                 const reactorPulse = Math.sin(timeNowSec * 7.5 + lu * 0.08) * 0.5 + 0.5;
-                                colAttr[i3] = 0.25 + reactorPulse * 0.55;
-                                colAttr[i3 + 1] = 0.70 + reactorPulse * 0.25;
+                                colAttr[i3] = 0.35 + reactorPulse * 0.55;
+                                colAttr[i3 + 1] = 0.78 + reactorPulse * 0.22;
                                 colAttr[i3 + 2] = 1.0;
                             } else {
-                                if (localStrength < 0.65) {
+                                if (genesisTau < 1.0 && localStrength < 0.50) {
                                     // 飞旋盘旋期：炽热高能星尘白金与青蓝电弧色，宛如银河星尘璀璨
                                     const energyGlow = 1.0 - localStrength;
                                     colAttr[i3] = 0.85 + energyGlow * 0.15;
                                     colAttr[i3 + 1] = 0.90 + energyGlow * 0.10;
                                     colAttr[i3 + 2] = 1.0;
                                 } else {
-                                    // 冷却定格期：由高光迅速淬火析出为 1:1 原画真实色彩 (黑曜石黑发/深蓝机甲/温润雪肌)
-                                    const coolFactor = (localStrength - 0.65) / 0.35; // 0.0 -> 1.0
-                                    const girlPulse = Math.sin(timeNowSec * 3.2 + lu * 0.04) * 0.015;
-                                    let intensity = 0.24;
-                                    if (pType === 0) intensity = 0.32; // 面部温润雪肌
-                                    else if (pType === 1) intensity = 0.28; // 飘逸黑发
-                                    else if (pType === 2) intensity = 0.22; // 陶瓷白与深蓝胸甲
-                                    else if (pType === 4) intensity = 0.24; // 修长双腿
-                                    else if (pType === 5) intensity = 0.28; // 白金高跟战靴
+                                    // 冷却定格期：由高光迅速淬火析出为 1:1 原画真实全动态范围色彩
+                                    const coolFactor = (genesisTau >= 1.0) ? 1.0 : Math.max(0.0, Math.min(1.0, (localStrength - 0.50) / 0.50));
+                                    const girlPulse = Math.sin(timeNowSec * 2.8 + lu * 0.03) * 0.02;
 
-                                    const targetR = Math.min(1.0, girlColors[i3] * intensity + girlPulse);
-                                    const targetG = Math.min(1.0, girlColors[i3 + 1] * intensity + girlPulse);
-                                    const targetB = Math.min(1.0, girlColors[i3 + 2] * intensity + girlPulse);
+                                    let targetR, targetG, targetB;
+                                    if (pType === 0) {
+                                        // 0. 面部雪肌：1:1 原画温润雪肤，五官清晰分明
+                                        targetR = Math.min(1.0, girlColors[i3] * 1.05 + girlPulse);
+                                        targetG = Math.min(1.0, girlColors[i3 + 1] * 1.03 + girlPulse);
+                                        targetB = Math.min(1.0, girlColors[i3 + 2] * 1.02 + girlPulse);
+                                    } else if (pType === 1) {
+                                        // 1. 如瀑黑发：深邃黑曜石发丝，100% 还原原画黑发纹理
+                                        targetR = Math.min(1.0, girlColors[i3] * 1.02);
+                                        targetG = Math.min(1.0, girlColors[i3 + 1] * 1.02);
+                                        targetB = Math.min(1.0, girlColors[i3 + 2] * 1.05);
+                                    } else if (pType === 2) {
+                                        // 2. 陶瓷白与深蓝胸甲：金属光泽质感
+                                        targetR = Math.min(1.0, girlColors[i3] * 1.05 + girlPulse);
+                                        targetG = Math.min(1.0, girlColors[i3 + 1] * 1.05 + girlPulse);
+                                        targetB = Math.min(1.0, girlColors[i3 + 2] * 1.08 + girlPulse);
+                                    } else if (pType === 4) {
+                                        // 4. 修长双腿
+                                        targetR = Math.min(1.0, girlColors[i3] * 1.02);
+                                        targetG = Math.min(1.0, girlColors[i3 + 1] * 1.02);
+                                        targetB = Math.min(1.0, girlColors[i3 + 2] * 1.05);
+                                    } else if (pType === 5) {
+                                        // 5. 白金战靴
+                                        targetR = Math.min(1.0, girlColors[i3] * 1.08);
+                                        targetG = Math.min(1.0, girlColors[i3 + 1] * 1.08);
+                                        targetB = Math.min(1.0, girlColors[i3 + 2] * 1.12);
+                                    } else {
+                                        targetR = Math.min(1.0, girlColors[i3] * 1.02);
+                                        targetG = Math.min(1.0, girlColors[i3 + 1] * 1.02);
+                                        targetB = Math.min(1.0, girlColors[i3 + 2] * 1.05);
+                                    }
 
                                     colAttr[i3] = THREE.MathUtils.lerp(0.85, targetR, coolFactor);
                                     colAttr[i3 + 1] = THREE.MathUtils.lerp(0.92, targetG, coolFactor);
@@ -3110,6 +3166,12 @@
                     MOUSE.smoothPos.set(0, 18, 0);
                     MOUSE.aimDirection.set(0, 1, 0).normalize();
                     updateStatus(I18N[currentLang]?.statusGirlReady || '💃 漫威战甲·裴艺珍已唤醒！160,000 颗高精粒子 1:1 像素级凝聚为机甲超模！', '#f472b6');
+                }
+            } else if (e.key.toLowerCase() === 't') {
+                // T 键：手动切换是否开启 360° 缓慢环绕自转 (默认端正挺拔立正)
+                if (currentWeapon === 'GIRL') {
+                    isGirlAutoSpin = !isGirlAutoSpin;
+                    updateStatus(isGirlAutoSpin ? '🔄 已开启 360° 环视自转！' : '🧍 人像已恢复端正挺拔立正！', '#f472b6');
                 }
             } else if (e.key === '1') {
                 MOUSE.active = true;
