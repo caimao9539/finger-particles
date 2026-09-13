@@ -10,7 +10,7 @@
 
 #### 🌟 核心特色与七大多态形态
 - **160,000 颗高精星尘粒子与 3D 刚体拓扑（粒子数量激增至 16 万）**：
-  1. 💃 **漫威战甲·裴艺珍 (Marvel Armor Pei Yizhen)**：全场 **160,000 颗星尘粒子 1:1 像素级极致写实还原**东方神颜漫威机甲超模！
+  1. 💃 **云龙AI·机甲女战士 (Yunlong AI · Mecha Valkyrie)**：全场 **160,000 颗星尘粒子 1:1 像素级极致写实还原**东方神颜漫威机甲超模！
      - **🎬 2.8 秒电影级四阶段解剖学生长变身系统**：告别单调收缩，如好莱坞大片般充满层次感与高潮看点：
        - `⚡ [1/4] 能量奇点`：胸口倒三角方舟反应堆等离子引力场率先引爆；
        - `👢 [2/4] 足踏虚空`：白金尖头战靴与超模美腿纳米逆流结晶拔地而起；
@@ -21,7 +21,7 @@
      - **🎨 1:1 原画像素级拓扑与真实写实色彩 (NormalBlending)**：告别加法混合过曝白茫与暗沉，基于全身高清参考图，搭载 4.00 MB 二进制流模型（`peiyizhen_model.bin`）毫秒级加载，全动态范围真实再现东方神颜温润雪肌、深邃如瀑黑发发丝与白金陶瓷装甲质感；
      - **绝美神颜与战衣细节**：东方神颜精致面容与红润唇珠、侧分飘逸黑发随微风轻拂、深蓝金属胸甲与白金陶瓷纳米机甲护甲、黄金细线精工勾勒；
      - **胸口发光方舟反应堆与手腕等离子微光**：胸口倒三角方舟反应堆与手腕电弧附带独立高频脉冲呼吸算法，绽放耀眼苍蓝极光；
-     - **唤醒方式**：在摄像头前比出 **👌 优雅兰花仙手 / 极光 OK 手势**（or ✌️ 拍照比耶），亦可点击底部「💃 漫威战甲·裴艺珍」按钮或按键盘「**7**」/「**B**」。
+     - **唤醒方式**：在摄像头前比出 **👌 优雅兰花仙手 / 极光 OK 手势**（or ✌️ 拍照比耶），亦可点击底部「💃 云龙AI·机甲女战士」按钮或按键盘「**7**」/「**B**」。
   2. 🔫 **粒子能量手枪 (Plasma Cannon)**：**拇指+食指比出手枪手势**，160,000 颗粒子聚拢拓扑重构为一把科幻手枪！
      - **瞄准追踪**：随手腕与食指方向实时 3D 旋转瞄准；
      - **扣扳机开火**：拇指自然下压扣动扳机（或点击鼠标/按空格键），枪口喷射耀眼等离子闪光并向瞄准方向打出高速穿透激光弹，伴随机械后坐力震颤！
@@ -51,7 +51,7 @@ A high-performance dual-hand AI gesture interactive cosmic particle universe bui
 
 ### 🌟 Key Features & 3D Morphing Shapes
 - **160,000 High-Precision Cosmic Particles & 3D Rigid Topology (Surged to 160k Particles)**:
-  1. 💃 **Marvel Armor Pei Yizhen**: **160,000 cosmic particles** forge a 1:1 pixel-level photorealistic sculpt of the oriental mecha supermodel Pei Yizhen!
+  1. 💃 **Yunlong AI · Mecha Valkyrie**: **160,000 cosmic particles** forge a 1:1 pixel-level photorealistic sculpt of the oriental mecha supermodel!
      - **🎬 2.8s Cinematic 4-Phase Anatomical Metamorphosis**: Breaking free from uniform scaling with Hollywood-grade crescendo:
        - `⚡ [1/4] Arc Ignition`: Chest inverted Arc Reactor initiates a plasma gravitational vortex;
        - `👢 [2/4] Kinetic Ascent`: Platinum mechanical stiletto heels and supermodel legs crystallize upwards;
@@ -62,7 +62,7 @@ A high-performance dual-hand AI gesture interactive cosmic particle universe bui
      - **Divine Facial Beauty & Suit Detailing**: Gorgeous facial features, flowing black hair waving in the breeze, midnight blue metallic breastplate, and white ceramic nano-armor with gold inlays;
      - **Glowing Arc Reactor & Plasma Pulse**: Inverted triangular Arc Reactor on the chest and wrist gauntlets with high-frequency sine pulsation in brilliant cyan electric light;
      - **Slender Armor Legs & High-Heeled Stiletto Boots**: Catwalk cross-step stance on platinum mechanical stiletto heels;
-     - **Gesture Activation**: Form a **👌 Lotus / OK Sign** (or ✌️ Peace Sign) in front of the camera, or click "💃 Marvel Armor Pei Yizhen" / press "**7**" / "**B**".
+     - **Gesture Activation**: Form a **👌 Lotus / OK Sign** (or ✌️ Peace Sign) in front of the camera, or click "💃 Yunlong AI · Mecha Valkyrie" / press "**7**" / "**B**".
   2. 🔫 **Plasma Blaster (Finger Gun)**: Form a gun gesture with **Thumb + Index finger**, morphing 160,000 cosmic particles into a sci-fi plasma cannon!
      - **Dynamic Aiming**: Real-time 3D angular rotation tracking your index finger and wrist;
      - **Trigger Pull & Laser Fire**: Bend your thumb down (or click mouse / press Space) to fire high-energy plasma bolts with recoil feedback!
@@ -90,7 +90,7 @@ Three.js 및 Google MediaPipe Hands 알고리즘으로 구축된 고성능 양�
 
 ### 🌟 핵심 기능 및 3대 3D 조각 토폴로지
 - **160,000개의 고정밀 우주 입자 (16만 개 극강의 포토리얼리즘)**:
-  1. 💃 **마블 아머 배이진 조각 (Marvel Armor Pei Yizhen)**: **160,000개의 성운 입자가 1:1 픽셀 단위로 정확하게** 동양적 신비의 나노 메카 슈퍼모델 배이진으로 응집됩니다!
+  1. 💃 **운용 AI · 메카 여전사 (Yunlong AI · Mecha Valkyrie)**: **160,000개의 성운 입자가 1:1 픽셀 단위로 정확하게** 동양적 신비의 나노 메카 슈퍼모델로 응집됩니다!
      - **🎬 2.8초 시네마틱 4단계 해부학적 각성 변신 시스템**: 단조로운 수축을 넘어 할리우드 영화 수준의 점진적 시각적 클라이맥스 제공:
        - `⚡ [1/4] 아크 점화`: 흉부 역삼각형 아크 리액터의 플라즈마 중력 소용돌이 기동;
        - `👢 [2/4] 역방향 결정화`: 백금 기계식 힐과 슈퍼모델 각선미의 상향 나노 결정화;
@@ -101,7 +101,7 @@ Three.js 및 Google MediaPipe Hands 알고리즘으로 구축된 고성능 양�
      - **완벽한 페이스라인과 슈트 디테일**: 흩날리는 흑발, 미드나이트 블루 메탈과 화이트 세라믹 나노 아머, 골드 라인 인레이;
      - **발광 아크 리액터 & 플라즈마 펄스**: 흉부 역삼각형 아크 리액터와 손목 건틀릿의 고주파 청록빛 맥동 플라즈마 효과;
      - **슬렌더 롱다리와 기계식 하이힐 부츠**: 캣워크 크로스 스탠스와 백금 기계식 스틸레토 힐 부츠;
-     - **제스처 각성**: 카메라 앞에서 **👌 우아한 연화/OK 제스처** (또는 ✌️ 브이 제스처) 취하기, 또는 하단 '💃 마블 아머 배이진' 버튼 클릭 / 키보드 '**7**' / '**B**' 키.
+     - **제스처 각성**: 카메라 앞에서 **👌 우아한 연화/OK 제스처** (또는 ✌️ 브이 제스처) 취하기, 또는 하단 '💃 운용 AI · 메카 여전사' 버튼 클릭 / 키보드 '**7**' / '**B**' 키.
   2. 🔫 **플라즈마 블래스터 (권총 제스처)**: **엄지와 검지로 권총 모양을 만들면** 160,000개의 입자가 거대한 공상과학 플라즈마 블래스터로 재구성됩니다!
   3. 🗡️ **비검결·만검귀종 (두 손가락 플라즈마 검)**: **검지와 중지를 모아 뻗으면** 160,000개의 성운 입자가 빛나는 플라즈마 검으로 응집됩니다!
   4. 🖐️ **반중력 척력 방패 (Repulsor Shield)**: 손바닥을 앞으로 활짝 펴면 강력한 반중력 파동이 방출됩니다!
@@ -125,7 +125,7 @@ start.bat을 실행하거나 로컬 웹 서버(python -m http.server 8088)를 �
 
 | 动作 / Action / 동작 | 快捷键 / Shortcut / 단축키 |
 | :--- | :---: |
-| 💃 漫威战甲·裴艺珍 / Marvel Armor / 마블 아머 배이진 | **7** 或 **B** |
+| 💃 云龙AI·机甲女战士 / Yunlong AI Mecha Valkyrie / 운용 AI · 메카 여전사 | **7** 或 **B** |
 | 💥 一键彻底打散·游离态 / Disperse Topology / 입자 분산 | **X** |
 | 🔫 能量手枪 / Plasma Blaster / 플라즈마 블래스터 | 6 或 G |
 | 💥 开火射击 / Fire Blaster / 발사 | 空格 / Space / F / 鼠标左键 |
