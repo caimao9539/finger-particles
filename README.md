@@ -9,17 +9,17 @@
 基于 Three.js 与 Google MediaPipe Hands 算法打造的高性能双手 AI 手势交互星空粒子系统。免安装免编译，原生纯前端轻量化运行。
 
 #### 🌟 核心特色与七大多态形态
-- **72,000 颗高精星尘粒子与 3D 刚体拓扑（粒子数量翻倍）**：
-  1. 💃 **漫威战甲·裴艺珍 (Marvel Armor Pei Yizhen)**：全场 **72,000 颗星尘粒子 1:1 像素级精准还原**东方神颜漫威机甲超模！
-     - **1:1 原画像素级拓扑与真实色彩**：基于全身高清参考图，利用 AI 抠图与 3D 深度方程提取 72,000 颗高精粒子，搭载 1.80 MB 二进制流模型（`peiyizhen_model.bin`）毫秒级加载；
+- **160,000 颗高精星尘粒子与 3D 刚体拓扑（粒子数量激增至 16 万）**：
+  1. 💃 **漫威战甲·裴艺珍 (Marvel Armor Pei Yizhen)**：全场 **160,000 颗星尘粒子 1:1 像素级极致写实还原**东方神颜漫威机甲超模！
+     - **1:1 原画像素级拓扑与真实色彩**：基于全身高清参考图，利用 AI 抠图与解剖学 3D 深度曲面方程提取 160,000 颗高精粒子，搭载 4.00 MB 二进制流模型（`peiyizhen_model.bin`）毫秒级加载；
      - **绝美神颜与战衣细节**：东方神颜精致面容与红润唇珠、侧分飘逸黑发随微风轻拂、深蓝金属胸甲与白金陶瓷纳米机甲护甲、黄金细线精工勾勒；
      - **胸口发光方舟反应堆与手腕等离子微光**：胸口倒三角方舟反应堆与手腕电弧附带独立高频脉冲呼吸算法，绽放耀眼苍蓝极光！
      - **逆天修长机甲双腿与机械高跟战靴**：修长分立的纳米战甲美腿呈现超模微交叉走秀步态，足蹬白金机械尖头高跟战靴，在太空中优雅自转；
      - **唤醒方式**：点击底部「💃 漫威战甲·裴艺珍」按钮，或按键盘「**7**」/「**B**」。
-  2. 🔫 **粒子能量手枪 (Plasma Cannon)**：**拇指+食指比出手枪手势**，72,000 颗粒子聚拢拓扑重构为一把科幻手枪！
+  2. 🔫 **粒子能量手枪 (Plasma Cannon)**：**拇指+食指比出手枪手势**，160,000 颗粒子聚拢拓扑重构为一把科幻手枪！
      - **瞄准追踪**：随手腕与食指方向实时 3D 旋转瞄准；
      - **扣扳机开火**：拇指自然下压扣动扳机（或点击鼠标/按空格键），枪口喷射耀眼等离子闪光并向瞄准方向打出高速穿透激光弹，伴随机械后坐力震颤！
-  3. 🗡️ **双指剑诀·万剑归宗 (Dual-Blade Dance)**：**食指与中指同时伸长并拢**，72,000 颗星尘粒子凝聚为一把等离子神剑，随双指朝向实时挥舞劈刺！
+  3. 🗡️ **双指剑诀·万剑归宗 (Dual-Blade Dance)**：**食指与中指同时伸长并拢**，160,000 颗星尘粒子凝聚为一把等离子神剑，随双指朝向实时挥舞劈刺！
   4. 🖐️ **掌心时空斥力盾 (Repulsor Shield)**：五指完全张开向前推，掌心释放反引力能量波，将星尘粒子剧烈推开激荡出明亮光晕！
   5. 🤏 **引力黑洞与双星虫洞 (Gravity Pinch & Wormhole)**：单手拇指食指捏合形成吸积盘黑洞；双手齐捏合拉出扭曲的时空虫洞桥梁！
   6. 👏 **双手击掌时空激波 (Cosmic Clap Shockwave)**：双手在空中快速击掌合十，碰撞点引爆全屏环形激波！
@@ -42,17 +42,17 @@
 A high-performance dual-hand AI gesture interactive cosmic particle universe built with Three.js and Google MediaPipe Hands. Zero installation, zero build dependencies, pure web client application.
 
 ### 🌟 Key Features & 3D Morphing Shapes
-- **72,000 High-Precision Cosmic Particles & 3D Rigid Topology (Doubled Particle Density)**:
-  1. 💃 **Marvel Armor Pei Yizhen**: **72,000 cosmic particles** forge a 1:1 pixel-level sculpt of the oriental mecha supermodel Pei Yizhen!
-     - **1:1 Image Pixel Cloud & Authentic Colors**: Reconstructed directly from reference character art into a 1.80 MB binary model (`peiyizhen_model.bin`) loaded in milliseconds;
+- **160,000 High-Precision Cosmic Particles & 3D Rigid Topology (Surged to 160k Particles)**:
+  1. 💃 **Marvel Armor Pei Yizhen**: **160,000 cosmic particles** forge a 1:1 pixel-level photorealistic sculpt of the oriental mecha supermodel Pei Yizhen!
+     - **1:1 Image Pixel Cloud & Authentic Colors**: Reconstructed directly from reference character art into a 4.00 MB binary model (`peiyizhen_model.bin`) loaded in milliseconds;
      - **Divine Facial Beauty & Suit Detailing**: Gorgeous facial features, flowing black hair waving in the breeze, midnight blue metallic breastplate, and white ceramic nano-armor with gold inlays;
      - **Glowing Arc Reactor & Plasma Pulse**: Inverted triangular Arc Reactor on the chest and wrist gauntlets with high-frequency sine pulsation in brilliant cyan electric light;
      - **Slender Armor Legs & High-Heeled Stiletto Boots**: Catwalk cross-step stance on platinum mechanical stiletto heels, rotating gracefully in 3D cosmic space;
      - **Toggle**: Click bottom "💃 Marvel Armor Pei Yizhen" button or press keyboard "**7**" / "**B**".
-  2. 🔫 **Plasma Blaster (Finger Gun)**: Form a gun gesture with **Thumb + Index finger**, morphing 72,000 cosmic particles into a sci-fi plasma cannon!
+  2. 🔫 **Plasma Blaster (Finger Gun)**: Form a gun gesture with **Thumb + Index finger**, morphing 160,000 cosmic particles into a sci-fi plasma cannon!
      - **Dynamic Aiming**: Real-time 3D angular rotation tracking your index finger and wrist;
      - **Trigger Pull & Laser Fire**: Bend your thumb down (or click mouse / press Space) to fire high-energy plasma bolts with recoil feedback!
-  3. 🗡️ **Two-finger Dual-Blade (Sword Dance)**: Extend **Index + Middle fingers together**, forging 72,000 stellar particles into a plasma blade!
+  3. 🗡️ **Two-finger Dual-Blade (Sword Dance)**: Extend **Index + Middle fingers together**, forging 160,000 stellar particles into a plasma blade!
   4. 🖐️ **Repulsor Shield**: Spread fingers open to unleash an anti-gravity repulsor shockwave!
   5. 🤏 **Gravitational Black Hole & Wormhole**: Pinch thumb and index to form an accretion disk; pinch with both hands to bridge a cosmic wormhole!
   6. 👏 **Cosmic Clap Shockwave**: Clap both hands together in the air to trigger an explosive shockwave!
@@ -75,15 +75,15 @@ Run start.bat on Windows or serve locally via python -m http.server 8088. Open h
 Three.js 및 Google MediaPipe Hands 알고리즘으로 구축된 고성능 양손 AI 제스처 반응형 우주 입자 시스템입니다. 별도의 설치나 빌드 과정 없이 웹 브라우저에서 즉시 실행됩니다.
 
 ### 🌟 핵심 기능 및 3대 3D 조각 토폴로지
-- **72,000개의 고정밀 우주 입자 (입자 수 2배 확대)**:
-  1. 💃 **마블 아머 배이진 조각 (Marvel Armor Pei Yizhen)**: **72,000개의 성운 입자가 1:1 픽셀 단위로 정확하게** 동양적 신비의 나노 메카 슈퍼모델 배이진으로 응집됩니다!
-     - **1:1 원화 기반 바이너리 포인트 클라우드**: 전신 캐릭터 원화를 분석하여 밀리초 단위로 로드되는 1.80MB 바이너리 모델(`peiyizhen_model.bin`) 탑재;
+- **160,000개의 고정밀 우주 입자 (16만 개 극강의 포토리얼리즘)**:
+  1. 💃 **마블 아머 배이진 조각 (Marvel Armor Pei Yizhen)**: **160,000개의 성운 입자가 1:1 픽셀 단위로 정확하게** 동양적 신비의 나노 메카 슈퍼모델 배이진으로 응집됩니다!
+     - **1:1 원화 기반 바이너리 포인트 클라우드**: 전신 캐릭터 원화를 분석하여 밀리초 단위로 로드되는 4.00MB 바이너리 모델(`peiyizhen_model.bin`) 탑재;
      - **완벽한 페이스라인과 슈트 디테일**: 흩날리는 흑발, 미드나이트 블루 메탈과 화이트 세라믹 나노 아머, 골드 라인 인레이;
      - **발광 아크 리액터 & 플라즈마 펄스**: 흉부 역삼각형 아크 리액터와 손목 건틀릿의 고주파 청록빛 맥동 플라즈마 효과;
      - **슬렌더 롱다리와 기계식 하이힐 부츠**: 캣워크 크로스 스탠스와 백금 기계식 스틸레토 힐 부츠, 우주 공간에서의 우아한 3D 자전;
      - **전환**: 하단 '💃 마블 아머 배이진' 버튼 클릭 또는 키보드 '**7**' / '**B**' 키.
-  2. 🔫 **플라즈마 블래스터 (권총 제스처)**: **엄지와 검지로 권총 모양을 만들면** 72,000개의 입자가 거대한 공상과학 플라즈마 블래스터로 재구성됩니다!
-  3. 🗡️ **비검결·만검귀종 (두 손가락 플라즈마 검)**: **검지와 중지를 모아 뻗으면** 72,000개의 성운 입자가 빛나는 플라즈마 검으로 응집됩니다!
+  2. 🔫 **플라즈마 블래스터 (권총 제스처)**: **엄지와 검지로 권총 모양을 만들면** 160,000개의 입자가 거대한 공상과학 플라즈마 블래스터로 재구성됩니다!
+  3. 🗡️ **비검결·만검귀종 (두 손가락 플라즈마 검)**: **검지와 중지를 모아 뻗으면** 160,000개의 성운 입자가 빛나는 플라즈마 검으로 응집됩니다!
   4. 🖐️ **반중력 척력 방패 (Repulsor Shield)**: 손바닥을 앞으로 활짝 펴면 강력한 반중력 파동이 방출됩니다!
   5. 🤏 **중력 블랙홀 및 웜홀 (Pinch & Wormhole)**: 엄지와 검지를 맞잡아 블랙홀과 시공간 웜홀을 생성!
   6. 👏 **박수 시공간 충격파 (Cosmic Clap)**: 허공에서 빠르게 박수를 치면 고리형 충격파 폭발!
